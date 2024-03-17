@@ -112,7 +112,7 @@ void draw_loaded_level() {
 void draw_player() {
     float x = shift_to_center_cell_by_x + static_cast<float>(player_column) * cell_size;
     float y = shift_to_center_cell_by_y + static_cast<float>(player_row)    * cell_size;
-    draw_sprite(player_sprite, x, y, cell_size);
+    draw_image(player_image, x, y, cell_size);
 }
 
 void draw_reload_req_menu() {

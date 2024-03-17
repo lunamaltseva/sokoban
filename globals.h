@@ -5,260 +5,499 @@
 
 #include <string>
 #include <cstddef>
+#include <vector>
 
 /* Game Elements */
 
-const char WALL           = '#';
-const char FLOOR          = '-';
-const char BOX            = '$';
-const char BOX_ON_GOAL    = '*';
-const char GOAL           = '.';
-const char PLAYER         = '@';
-const char PLAYER_ON_GOAL = '+';
+const char FLOOR     = ' ';
+const char WALL      = '#';
+const char ENTRANCE  = 'P';
+const char EXIT      = 'E';
+const char KEY       = '*';
+const char MARBLE    = '.';
+const char QUICKTILE = '!';
+const char PAWN      = '1'; // Typical chess values for pieces
+const char ROOK      = '5';
+const char QUEEN     = '9';
+
+enum gameElements {
+    keyElement = 0, marbleElement = 1, quicktileElement = 2, pawnElement = 3, rookElement = 4, queenElement = 5
+};
+const int gameElementsCount = 6;
+bool gameElements[gameElementsCount]{false};
 
 /* Levels */
 
-struct level {
-    size_t rows = 0, columns = 0;
+class level {
+public:
+    size_t rows = 0, columns = 0, moves = 0, keys = 0;
     char *data = nullptr;
 };
 
+// Level 1
+
 char LEVEL_1_DATA[] = {
-    ' ', ' ', ' ', ' ', '#', '#', '#', '#', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    ' ', ' ', ' ', ' ', '#', '-', '-', '-', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    ' ', ' ', ' ', ' ', '#', '$', '-', '-', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    ' ', ' ', '#', '#', '#', '-', '-', '$', '#', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    ' ', ' ', '#', '-', '-', '$', '-', '$', '-', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    '#', '#', '#', '-', '#', '-', '#', '#', '-', '#', ' ', ' ', ' ', '#', '#', '#', '#', '#', '#',
-    '#', '-', '-', '-', '#', '-', '#', '#', '-', '#', '#', '#', '#', '#', '-', '-', '.', '.', '#',
-    '#', '-', '$', '-', '-', '$', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '.', '.', '#',
-    '#', '#', '#', '#', '#', '-', '#', '#', '#', '-', '#', '@', '#', '#', '-', '-', '.', '.', '#',
-    ' ', ' ', ' ', ' ', '#', '-', '-', '-', '-', '-', '#', '#', '#', '#', '#', '#', '#', '#', '#',
-    ' ', ' ', ' ', ' ', '#', '#', '#', '#', '#', '#', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '
+        '#', '#', '#', '#', '#', '#', '#', '#', '#',
+        '#', ' ', ' ', '*', ' ', ' ', ' ', ' ', '#',
+        '#', ' ', '#', '#', '#', ' ', '#', ' ', '#',
+        '#', ' ', '#', ' ', 'P', ' ', '#', ' ', '#',
+        '#', ' ', ' ', ' ', 'E', ' ', '#', ' ', '#',
+        '#', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#',
+        '#', ' ', '#', '#', ' ', '#', '#', ' ', '#',
+        '#', ' ', ' ', ' ', ' ', ' ', '*', ' ', '#',
+        '#', '#', '#', '#', '#', '#', '#', '#', '#',
 };
 
 level LEVEL_1 = {
-    11, 19,
-    LEVEL_1_DATA
+        9, 9, 23, 2,
+        LEVEL_1_DATA
 };
 
+// Level 2
+
 char LEVEL_2_DATA[] = {
-    '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', ' ', ' ',
-    '#', '.', '.', '-', '-', '#', '-', '-', '-', '-', '-', '#', '#', '#',
-    '#', '.', '.', '-', '-', '#', '-', '$', '-', '-', '$', '-', '-', '#',
-    '#', '.', '.', '-', '-', '#', '$', '#', '#', '#', '#', '-', '-', '#',
-    '#', '.', '.', '-', '-', '-', '-', '@', '-', '#', '#', '-', '-', '#',
-    '#', '.', '.', '-', '-', '#', '-', '#', '-', '-', '$', '-', '#', '#',
-    '#', '#', '#', '#', '#', '#', '-', '#', '#', '$', '-', '$', '-', '#',
-    ' ', ' ', '#', '-', '$', '-', '-', '$', '-', '$', '-', '$', '-', '#',
-    ' ', ' ', '#', '-', '-', '-', '-', '#', '-', '-', '-', '-', '-', '#',
-    ' ', ' ', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'
+        '#', '#', '#', '#', '#', '#', '#', '#', '#',
+        '#', 'P', ' ', ' ', ' ', ' ', '#', 'E', '#',
+        '#', ' ', '#', '#', '#', ' ', ' ', ' ', '#',
+        '#', ' ', '#', '*', '#', '1', '#', ' ', '#',
+        '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+        '#', ' ', '#', ' ', '#', '#', ' ', ' ', '#',
+        '#', ' ', ' ', ' ', '#', '#', ' ', '#', '#',
+        '#', ' ', ' ', ' ', ' ', ' ', '*', ' ', '#',
+        '#', '#', '#', '#', '#', '#', '#', '#', '#'
 };
 
 level LEVEL_2 = {
-    10, 14,
-    LEVEL_2_DATA
+        9, 9, 24, 2,
+        LEVEL_2_DATA
 };
 
+// Level 3
+
 char LEVEL_3_DATA[] = {
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#', '#', '#', '#', '#', '#', '#', '#', ' ',
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#', '-', '-', '-', '-', '-', '@', '#', ' ',
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#', '-', '$', '#', '$', '-', '#', '#', ' ',
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#', '-', '$', '-', '-', '$', '#', ' ', ' ',
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#', '#', '$', '-', '$', '-', '#', ' ', ' ',
-    '#', '#', '#', '#', '#', '#', '#', '#', '#', '-', '$', '-', '#', '-', '#', '#', '#',
-    '#', '.', '.', '.', '.', '-', '-', '#', '#', '-', '$', '-', '-', '$', '-', '-', '#',
-    '#', '#', '.', '.', '.', '-', '-', '-', '-', '$', '-', '-', '$', '-', '-', '-', '#',
-    '#', '.', '.', '.', '.', '-', '-', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#',
-    '#', '#', '#', '#', '#', '#', '#', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '
+        '#','#','#','#','#','#','#','#','#',
+        '#',' ',' ','E','#',' ',' ','#','#',
+        '#','P',' ',' ','.',' ','*',' ','#',
+        '#',' ','#',' ','#',' ',' ',' ','#',
+        '#',' ',' ',' ',' ',' ','#','#','#',
+        '#','#','#',' ','#',' ',' ',' ','#',
+        '#','#',' ',' ',' ',' ',' ','#','#',
+        '#','#','*',' ','#',' ','.','5','#',
+        '#','#','#','#','#','#','#','#','#',
 };
 
 level LEVEL_3 = {
-    10, 17,
-    LEVEL_3_DATA
+        9, 9, 21, 2,
+        LEVEL_3_DATA
 };
 
-const size_t LEVEL_COUNT = 3;
+// Level 4
+
+char LEVEL_4_DATA[] = {
+        '#', '#', '#', '#', '#', '#', '#', '#', '#',
+        '#', ' ', ' ', 'P', ' ', ' ', ' ', '1', '#',
+        '#', '!', '#', '!', '#', '!', '#', '!', '#',
+        '#', ' ', '!', 'E', '!', ' ', '#', '*', '#',
+        '#', ' ', '#', '!', '#', '#', '#', ' ', '#',
+        '#', ' ', ' ', ' ', '!', ' ', ' ', ' ', '#',
+        '#', '!', '#', '!', '#', '!', '#', '!', '#',
+        '#', ' ', ' ', ' ', ' ', ' ', '!', ' ', '#',
+        '#', ' ', '*', '#', '#', '.', ' ', '5', '#',
+        '#', '#', '#', '#', '#', '#', '#', '#', '#',
+};
+
+level LEVEL_4 = {
+        10, 9, 23, 2,
+        LEVEL_4_DATA
+};
+
+// Level 5
+
+char LEVEL_5_DATA[] = {
+        '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#',
+        '#', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', '#',
+        '#', ' ', '#', '!', '#', '!', '#', ' ', '#', ' ', '#',
+        '#', '*', '!', 'P', ' ', ' ', '!', ' ', '!', ' ', '#',
+        '#', ' ', '#', '!', '#', ' ', '#', '!', '#', ' ', '#',
+        '#', ' ', ' ', ' ', ' ', 'E', ' ', ' ', ' ', ' ', '#',
+        '#', '!', '#', '.', '#', ' ', '#', '!', '#', ' ', '#',
+        '#', ' ', ' ', ' ', '!', ' ', ' ', '9', '*', ' ', '#',
+        '#', ' ', '#', '!', '#', ' ', '#', ' ', '#', ' ', '#',
+        '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#',
+        '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#',
+};
+
+level LEVEL_5 = {
+        11, 11, 31, 3,
+        LEVEL_5_DATA
+};
+
+// All together
+
+const size_t LEVEL_COUNT = 5;
 level LEVELS[LEVEL_COUNT] = {
-    LEVEL_1,
-    LEVEL_2,
-    LEVEL_3
+    LEVEL_1, LEVEL_2, LEVEL_3, LEVEL_4, LEVEL_5
 };
 
-/* Loaded Level Data */
+// Loaded Level Data
 
+bool isExitOpen;
+char* loadLevel = nullptr;
 level level;
-size_t level_index = -1;
+size_t startFromLevel = 0;
+size_t levelIndex = startFromLevel;
 
-/* Player Data */
+/* Figures */
 
-size_t player_row;
-size_t player_column;
+class Figure {
+public:
+    size_t row, column; Texture2D image;                                                                  // crucial
+    int position; char cell; Vector2 location;                                                            // optimization
+    bool isFalling = false, isToBeKilled = false, isKilled = false, shouldJump = false;                   // cosmetic
+};
+
+class Player : public Figure {
+public:
+    int keys = 0, livesMax = 3, lives = 3; // game mechanics
+};
+
+// Create figures
+
+Player player;
+
+// Figure out who moves after whom
+enum moveSequence {NONE, DONE, WAIT};
+moveSequence moveSequence[4];
+
+/* Animation */
+
+enum playAnimation {
+    fromMenu,           // fade when loading a level
+    playerMoving,       // smooth figure movement
+    playerFalling,      // figure aboard!
+    playerKilled,       // if player is killed
+    playerOutOfMoves,   // if the moves-clock ran out
+    levelStarting,      // smooth fade-in and fade-out when loading the level
+    levelEnding,
+    gameOver,           // print the game over message
+};
+playAnimation playAnimation;
+
+int imageIteration = 0;
+int animationDuration = 120;
+int framesPerEntity;
+Vector2 positionFrom;
+Vector2 positionTo;
+Vector2 path;
+size_t beginningFrame = 0;
 
 /* Graphics Metrics */
 
-const float CELL_SCALE = 0.6f; // An aesthetic parameter to add some negative space around level
-const float SCREEN_SCALE_DIVISOR = 700.0f; // The divisor was found through experimentation
-                                           // to scale things accordingly to look pleasant.
+const float CELL_SCALE = 0.85f; // An aesthetic parameter to add some negative space around level
+const float screenScale_DIVISOR = 85.3f; // The divisor was found through experimentation
+                                          // to scale things accordingly to look pleasant.
+float screenWidth;
+float screenHeight;
+float screenScale; // Used to scale text/UI components size and displacements based on the screen size
+float cellSize;
+float shiftToCenterCellByX;
+float shiftToCenterCellByY;
 
-float screen_width;
-float screen_height;
-float screen_scale; // Used to scale text/UI components size and displacements based on the screen size
-float cell_size;
-float shift_to_center_cell_by_x;
-float shift_to_center_cell_by_y;
+/* Assets */
 
-/* Fonts */
+// =-=-=-=-= Fonts =-=-=-=-=
+Font menuFont;
 
-Font menu_font;
-
-/* Menu Text Parameters */
-
-const std::string MENU_TITLE     = "Sokoban";
-const float MENU_TITLE_FONT_SIZE = 200.0f;
-const float MENU_TITLE_Y_SHIFT   = 10.0f;
-const Color MENU_TITLE_COLOR     = RED;
-
-const std::string MENU_SUBTITLE     = "Press Enter to start the game";
-const float MENU_SUBTITLE_FONT_SIZE = 30.0f;
-const float MENU_SUBTITLE_Y_SHIFT   = 80.0f;
-const Color MENU_SUBTITLE_COLOR     = WHITE;
-
-/* Game Text Parameters */
-
-const float GAME_LEVEL_FONT_SIZE = 70.0f;
-const float GAME_LEVEL_Y_SHIFT   = 30.0f;
-const Color GAME_LEVEL_COLOR1    = GRAY;
-const Color GAME_LEVEL_COLOR2    = WHITE;
-
-/* Images and Sprites */
-
-Texture2D wall_image;
-Texture2D floor_image;
-Texture2D goal_image;
-Texture2D box_image;
-Texture2D box_on_goal_image;
-
+// =-=-=-=-= Images and sprites =-=-=-=-=
 struct sprite {
-    size_t frame_count    = 0;
-    size_t frames_to_skip = 3;
-    size_t frames_skipped = 0;
-    size_t frame_index    = 0;
+    size_t frameCount    = 0;
+    size_t framesToSkip  = 3;
+    size_t framesSkipped = 0;
+    size_t frameIndex    = 0;
     bool loop = true;
-    size_t prev_game_frame = 0;
+    size_t prevGameFrame = 0;
     Texture2D *frames = nullptr;
 };
 
-sprite player_sprite;
+// Story
+Texture2D story0;
+Texture2D story1;
+Texture2D story2;
+Texture2D story3;
+Texture2D story4;
+Texture2D story5;
 
-/* Sounds */
+// Menus
+Texture2D menuTitle;
+sprite tutorialSprite;
 
-Sound goal_sound;
-Sound exit_sound;
+// Levels
+Texture2D wallDepthWhiteImage;
+Texture2D wallDepthBlackImage;
+Texture2D wallDepthQuickTileImage;
+Texture2D wallNoneImage;
+Texture2D boardWhiteImage;
+Texture2D boardBlackImage;
+Texture2D boardQuickTileImage;
+Texture2D boardHaloImage;
+Texture2D entranceImage;
+Texture2D exitImage;
+Texture2D exitClosedImage;
 
-/* Reload Request Text Parameters */
+// Elements
+Texture2D keyImage;
+Texture2D keyOutlineImage;
+Texture2D quickTileImage;
+sprite marbleSprite;
+sprite keySprite;
 
-const std::string RELOAD_REQ_TITLE     = "Press R to restart the level";
-const float RELOAD_REQ_TITLE_FONT_SIZE = 30.0f;
-const float RELOAD_REQ_TITLE_Y_SHIFT   = 0.0f;
-const Color RELOAD_REQ_TITLE_COLOR     = WHITE;
+// Figures
+Texture2D playerImage;
 
-/* Victory Menu Background */
+// =-=-=-=-= Sounds and Music =-=-=-=-=
 
-struct victory_ball {
-    float x, y;
-    float dx, dy;
-    float radius;
-};
+// GUI
+Sound menuExitSound;
+Sound clickSound;
+Sound scrollSound;
+Sound backOutSound;
 
-const size_t VICTORY_BALL_COUNT     = 2000;
-const float VICTORY_BALL_MAX_SPEED  = 2.0f;
-const float VICTORY_BALL_MIN_RADIUS = 2.0f;
-const float VICTORY_BALL_MAX_RADIUS = 3.0f;
-const Color VICTORY_BALL_COLOR      = { 180, 180, 180, 255 };
-const unsigned char VICTORY_BALL_TRAIL_TRANSPARENCY = 10;
-victory_ball victory_balls[VICTORY_BALL_COUNT];
+// Clock
+Sound clockTickSound0;
+Sound clockTickSound1;
+Sound clockHighSound;
+Sound clockNormalSound;
+Sound clockLowSound;
 
-/* Victory Menu Text Parameters */
+// Figures
+Sound playerLandedSound;
+Sound figureFallSound;
 
-const std::string VICTORY_TITLE     = "You Won!";
-const float VICTORY_TITLE_FONT_SIZE = 200.0f;
-const float VICTORY_TITLE_Y_SHIFT   = 10.0f;
-const Color VICTORY_TITLE_COLOR     = RED;
+// Level & Elements;
+Sound puzzleCompleteSound;
+Sound exitOpenSound;
+Sound pickupKeySound;
+Sound marbleTopupSound;
+Sound quicktileBreakSound0;
+Sound quicktileBreakSound1;
+Sound levelBreakSound;
 
-const std::string VICTORY_SUBTITLE     = "Press Enter to go back to menu";
-const float VICTORY_SUBTITLE_FONT_SIZE = 30.0f;
-const float VICTORY_SUBTITLE_Y_SHIFT   = 80.0f;
-const Color VICTORY_SUBTITLE_COLOR     = WHITE;
+// Music
+Music mainTheme;
+Music introTheme;
+Music endingTheme;
 
 /* Frame Counter */
 
-size_t game_frame = 0;
+size_t gameFrame = 0;
 
 /* Game State */
 
-enum game_state {
+enum gameState {
+    INTRO_STATE,
     MENU_STATE,
+    CHOOSE_LEVEL_STATE,
+    TUTORIAL_STATE,
     GAME_STATE,
-    RELOAD_REQ_STATE,
-    VICTORY_STATE
+    ANIMATION_STATE,
+    PAUSED_STATE,
+    VICTORY_STATE,
+    GAME_OVER_STATE
 };
 
-game_state game_state = MENU_STATE;
+gameState gameState = INTRO_STATE;
 
-/* Forward Declarations */
+/* Text and Menus */
 
-// LEVELS_H
+class Text {
+public:
+    std::string line;
+    const float size, xShift, yShift;
+    const Color color;
+};
 
-void load_next_level();
-void unload_level();
-bool is_cell_inside_level(int row, int column);
-char& get_level_cell(size_t row, size_t column);
-void set_level_cell(size_t row, size_t column, char cell);
+class AnimatedText : public Text {
+public:
+    std::vector<std::string> entries;
+    const int frametime;
+    int textIndex = 0;
+};
 
-// PLAYER_H
+class Menu {
+public:
+    std::vector<std::string> entries;
+    const float size, xShift, yShift, dX, dY;
+    const Color selected, unselected;
+    int entrySelected;
+    enum menuType {MAIN_MENU_TYPE = 0, CHOOSE_LEVEL_TYPE = 1, PAUSE_TYPE = 2, GAME_OVER_TYPE = 3, VICTORY_TYPE = 4}; menuType type;
+};
 
-void spawn_player(size_t row, size_t column);
-void move_player(int dx, int dy);
+// Intro
+Text introHint = {"Press W or ^ to move forward", 30.0f, 0.0f, 300.0f, WHITE};
 
-// GRAPHICS_H
+// Title
+const float MENU_TITLE_SIZE = 400.0f;
+Menu mainMenu = {{"Play", "Load Level", "Tutorial", "Quit"},
+                 30.0f, 0.0f, 50.0f, 0.0f, 50.0f,
+                 {255, 255, 255, 255}, {100, 100, 100, 255},
+                 0, Menu::MAIN_MENU_TYPE};
+Text authorship = {"by @lunamaltseva", 15.0f, 0.0f, 300.0f, {100, 100, 100, 255}};
 
-void draw_menu();
-void draw_player_level();
-void derive_graphics_metrics_from_loaded_level();
-void draw_loaded_level();
-void draw_player();
-void draw_reload_req_menu();
-void create_victory_menu_background();
-void animate_victory_menu_background();
-void draw_victory_menu_background();
-void draw_victory_menu();
+// Choose Level
+Menu chooseLevelMenu = {{"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"},
+                        30.0f, -300.0f, 100.0f, 150.0f, 0.0f,
+                        {255, 255, 255, 255}, {100, 100, 100, 255},
+                        0, Menu::CHOOSE_LEVEL_TYPE};
 
-// IMAGES_H
+// Pause
+Menu pauseMenu = {{"Resume", "Restart Level", "Exit to Main Menu", "Quit Game"},
+                  30.0f, 0.0f, -50.0f, 0.0f, 50.0f,
+                  {255, 255, 255, 255}, {100, 100, 100, 255},
+                  0, Menu::PAUSE_TYPE};
+bool exitFromAnimation;
 
-void load_fonts();
-void unload_fonts();
+// Game Over
+AnimatedText gameOverTitle = {"This is not how it ends.", 60.0f, 0.0f, -100.0f, RED, {"This", "This is", "This is not", "This is not how", "This is not how it"}, 25};
+Menu gameOverMenu = {{"Try again", "Exit to Main Menu", "Quit Game"},
+                    30.0f, 0.0f, 50.0f, 0.0f, 50.0f,
+                    {255, 255, 255, 255}, {100, 100, 100, 255},
+                    0, Menu::GAME_OVER_TYPE};
 
-void load_images();
-void unload_images();
-void draw_image(Texture2D image, float x, float y, float width, float height);
-void draw_image(Texture2D image, float x, float y, float size);
+// Victory
+Text victoryTitle = {"FINIS", 60.0f, 0.0f, -100.0f, WHITE};
+Menu victoryMenu = {{"Exit to Main Menu", "Quit Game"},
+                     30.0f, 0.0f, 50.0f, 0.0f, 50.0f,
+                     {255, 255, 255, 255}, {100, 100, 100, 255},
+                     0, Menu::VICTORY_TYPE};
 
-sprite load_sprite(
-    const std::string &file_name_prefix,
-    const std::string &file_name_suffix,
-    size_t frame_count = 1,
-    bool loop = true,
-    size_t frames_to_skip = 3
-);
-void unload_sprite(sprite &sprite);
-void draw_sprite(sprite &sprite, float x, float y, float width, float height);
-void draw_sprite(sprite &sprite, float x, float y, float size);
+/* =-=-=-=-=-=-=-=-= Forward Declarations =-=-=-=-=-=-=-=-= */
 
-// SOUNDS_H
+/* LEVELS_H */
 
-void load_sounds();
-void unload_sounds();
-void play_sound(Sound sound);
+// Without loading any level, don't break the menu
+void initGraphics();
+
+// Pre-generation
+void initLevel();
+void placePlayer();
+
+// Generate
+void createLevelInstance();
+void loadNextLevel(int jump);
+
+// Complete animation
+void completeLevelDrawing();
+
+// Misc
+void listLevelElements(bool array[], size_t size, size_t checkLevelIndex);
+void restartLevel();
+
+/* FIGURE_H */
+
+// Misc
+float simplifyNumber(float num);
+
+// ==-- Player --==
+void movePlayer(int dx, int dy);
+void playerCompleteMovement();
+
+
+// DRAWING_H
+
+// Text utilities
+void drawText(const Text &text, float size, Vector2 position);
+void drawText(const Text &text);
+void drawAnimatedText(AnimatedText &text);
+void drawIconsAboveText(const Text &text, size_t checkLevelIndex);
+void drawMenu(const Menu &menu);
+
+// Image utilities
+void drawImage(Texture2D image, float x, float y, float size);
+void drawImage(Texture2D image, float x, float y, float width, float height);
+void drawSprite(sprite &sprite, float x, float y, float size);
+void drawSprite(sprite &sprite, float x, float y, float width, float height);
+
+// Level utilities
+void deriveGraphicsMetricsFromLoadedLevel();
+void drawLevelHalo(int i);
+
+Texture2D floorTexture(size_t row, size_t column);
+Texture2D wallTexture(size_t row, size_t column);
+void drawLevel();
+
+// Figure utilities
+void drawFigure(Figure figure);
+void drawFigures();
+
+// Fade-in utilities
+void fade(unsigned char transparency);
+void fade(int i, float step);
+void fade(int i, float step, float baseline);
+void fade(int i, int from, int until, unsigned char transparency);
+void fade(int i, int from, int until, float step, float baseline);
+
+/* ANIMATION_H */
+
+// Specifically for figures
+void initMovement(Figure figure, size_t rowFrom, size_t columnFrom, size_t rowTo, size_t columnTo);
+
+// Set up for animation
+void initAnimation();
+
+// Simplify animation
+void animateMovement(Figure &figure, int i);
+void animateFalling(Figure &figure, int i);
+
+// Finish animation and ...
+void endAnimation(int i);
+
+// Animate
+void drawAnimation();
+
+/* UI_UX_H */
+
+// Enable changing selected items in menus
+void controlMenu(Menu &menu);
+
+// Shorthand
+void toMainMenu();
+void fromMainMenu();
+
+// Simplify Input
+bool isAffirmativeButtonPressed();
+bool isNegativeButtonPressed();
+
+// Simplify updateGame()
+void controlMusic();
+void controlEsc();
+void controlMenus();
+void interpretSelection(Menu &menu);
+
+// In-game
+void drawGUI();
+
+// Draw states
+void drawIntro();
+void drawMainMenu();
+void drawChooseLevelMenu();
+void drawTutorial();
+void drawPauseMenu();
+void drawGameOverMenu();
+void drawVictoryMenu();
+
+/* ASSETS_H */
+// Fonts
+void loadFonts();
+void unloadFonts();
+
+// Images & sprites
+void loadImages();
+sprite loadSprite(const std::string &file_name_prefix, const std::string &file_name_suffix, size_t frameCount = 1, bool loop = true, size_t framesToSkip = 30);
+void unloadImages();
+void unloadSprite(sprite &sprite);
+
+// Sounds
+void loadSounds();
+void unloadSounds();
 
 #endif // GLOBALS_H
