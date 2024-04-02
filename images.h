@@ -9,7 +9,7 @@
 #include <cassert>
 
 void load_fonts() {
-    menu_font = LoadFont("data/fonts/ARCADECLASSIC.TTF");
+    menu_font = LoadFontEx("data/fonts/ARCADECLASSIC.TTF", 128, nullptr, 0);
 }
 
 void unload_fonts() {
@@ -22,7 +22,7 @@ void load_images() {
     goal_image        = LoadTexture("data/images/goal.png");
     box_image         = LoadTexture("data/images/box.png");
     box_on_goal_image = LoadTexture("data/images/box-on-goal.png");
-    player_image      = LoadTexture("data/images/player.png");
+    player.setImage(LoadTexture("data/images/player.png"));
 }
 
 void unload_images() {
@@ -31,7 +31,6 @@ void unload_images() {
     UnloadTexture(goal_image);
     UnloadTexture(box_image);
     UnloadTexture(box_on_goal_image);
-    UnloadTexture(player_image);
 }
 
 void draw_image(Texture2D image, float x, float y, float size) {

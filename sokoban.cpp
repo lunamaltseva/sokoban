@@ -1,172 +1,102 @@
 #include "raylib.h"
 
-// Forward Declarations
 #include "globals.h"
-
-// Gameplay
 #include "levels.h"
-#include "figure.h"
+#include "player.h"
+#include "graphics.h"
+#include "images.h"
+#include "sounds.h"
 
-// Visuals
-#include "drawing.h"
-#include "animation.h"
-#include "ui_ux.h"
-#include "assets.h"
-
-void updateGame() {
-    controlMusic();
-    controlEsc();
-    controlMenus();
-
-
-    switch(gameState) {
-        case INTRO_STATE:                                                     // avoid accidental skips
-            if((isAffirmativeButtonPressed() || isNegativeButtonPressed()) && !IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) toMainMenu();
-            break;
-
+void update_game() {
+    switch (game_state) {
         case MENU_STATE:
-            interpretSelection(mainMenu);
-            break;
-
-        case CHOOSE_LEVEL_STATE:
-            interpretSelection(chooseLevelMenu);
-            break;
-
-        case TUTORIAL_STATE:
-            if (isAffirmativeButtonPressed() || isNegativeButtonPressed()) {
-                gameState = MENU_STATE;
-                PlaySound(backOutSound);
+            SetExitKey(KEY_ESCAPE);
+            if (IsKeyPressed(KEY_ENTER)) {
+                game_state = GAME_STATE;
             }
             break;
-
         case GAME_STATE:
-            if      (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)   ) { movePlayer( 0, -1); }
-            else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT) ) { movePlayer(-1,  0); }
-            else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN) ) { movePlayer( 0,  1); }
-            else if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { movePlayer( 1,  0); }
-            if (isNegativeButtonPressed()) {
-                PlaySound(backOutSound);
-                gameState = PAUSED_STATE;
-                exitFromAnimation = false;
+            SetExitKey(0);
+            if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) {
+                player.move(0, -1);
+                return;
+            } else if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) {
+                player.move(0, 1);
+                return;
+            } else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
+                player.move(-1, 0);
+                return;
+            } else if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
+                player.move(1, 0);
+                return;
+            } else if (IsKeyPressed(KEY_ESCAPE)) {
+                game_state = RELOAD_REQ_STATE;
             }
             break;
-
-        case PAUSED_STATE:
-            interpretSelection(pauseMenu);
-            break;
-
-        case ANIMATION_STATE:
-            if (isNegativeButtonPressed()) {
-                PlaySound(backOutSound);
-                gameState = PAUSED_STATE;
-                exitFromAnimation = true;
+        case RELOAD_REQ_STATE:
+            if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_ENTER)) {
+                game_state = GAME_STATE;
+            } else if (IsKeyPressed(KEY_R)) {
+                level.unload();
+                level.load(0);
+                game_state = GAME_STATE;
             }
             break;
-
-        case GAME_OVER_STATE:
-            interpretSelection(gameOverMenu);
-            break;
-
         case VICTORY_STATE:
-            interpretSelection(victoryMenu);
+            SetExitKey(KEY_ESCAPE);
+            if (IsKeyPressed(KEY_ENTER)) {
+                game_state = MENU_STATE;
+            }
             break;
     }
 }
 
-void drawGame() {
-    ClearBackground(BLACK);
+void draw_game() {
+    ++game_frame;
 
-    Camera2D camera = { 0 };
-    camera.zoom = 1.0f;
-    Vector2 playerPos = {
-            camera.zoom*((static_cast<float>(player.column) * cellSize + shiftToCenterCellByX) - (screenWidth-cellSize)*0.5f),
-            camera.zoom*((static_cast<float>(player.row) * cellSize + shiftToCenterCellByY) - (screenHeight-cellSize)*0.5f)};
-    camera.target = playerPos;
-
-    BeginMode2D(camera);
-    switch(gameState) {
-        case INTRO_STATE:
-            drawIntro();
-            break;
-
+    switch (game_state) {
         case MENU_STATE:
-            gameFrame++;
-            drawMainMenu();
-            drawMenu(mainMenu);
-            fade(static_cast<int>(gameFrame), 0, 60, -static_cast<float>(animationDuration) / 30.0f, 256);
+            draw_menu();
             break;
-
-        case CHOOSE_LEVEL_STATE:
-            gameFrame++;
-            drawMainMenu();
-            drawChooseLevelMenu();
-            break;
-
-        case TUTORIAL_STATE:
-            gameFrame++;
-            drawTutorial();
-            break;
-
         case GAME_STATE:
-            gameFrame++;
-            /* Draw the board */
-            drawLevel();
-            /* Draw the figures */
-            drawFigure(player);
-            /* Draw the GUI */
-            drawGUI();
+            draw_loaded_level();
+            player.draw();
             break;
-
-        case ANIMATION_STATE:
-            gameFrame++;
-            drawAnimation();
+        case RELOAD_REQ_STATE:
+            draw_reload_req_menu();
             break;
-
-        case PAUSED_STATE:
-            drawPauseMenu();
-            break;
-
         case VICTORY_STATE:
-            drawVictoryMenu();
-            break;
-
-        case GAME_OVER_STATE:
-            drawGameOverMenu();
+            draw_victory_menu();
             break;
     }
-    EndMode2D();
 }
 
-int main() {                       // Since we are dealing with pixel arts, antialiasing is actually detrimental
-    SetConfigFlags(FLAG_VSYNC_HINT /*| FLAG_MSAA_4X_HINT*/);
-    InitWindow(GetMonitorWidth(0), GetMonitorHeight(1), "Dungeon");
+int main() {
+    SetConfigFlags(FLAG_VSYNC_HINT);
+    InitWindow(GetScreenWidth(), GetScreenHeight(), "Sokoban");
     SetTargetFPS(60);
-    ToggleFullscreen();
     HideCursor();
+    ToggleFullscreen();
 
-    InitAudioDevice();
-    initGraphics();
-
-    loadFonts();
-    loadImages();
-    loadSounds();
+    load_fonts();
+    load_images();
+    load_sounds();
+    level.load();
 
     while (!WindowShouldClose()) {
         BeginDrawing();
 
-        updateGame();
-        drawGame();
+        update_game();
+        draw_game();
 
         EndDrawing();
     }
-
-    unloadFonts();
-    unloadImages();
-    unloadSounds();
-
-    delete[] loadLevel;
-    CloseAudioDevice();
     CloseWindow();
+
+    level.unload();
+    unload_sounds();
+    unload_images();
+    unload_fonts();
 
     return 0;
 }
