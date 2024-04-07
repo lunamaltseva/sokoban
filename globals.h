@@ -2,48 +2,10 @@
 #define GLOBALS_H
 
 #include "raylib.h"
+#include "lunalib.h"
 
 #include <string>
 #include <cstddef>
-#include <stack>
-
-struct vector2 {
-    vector2() : x(0), y(0) {};
-    vector2(size_t row, size_t column) : x(row), y(column) {}
-    size_t x, y;
-};
-
-/* Levels */
-
-class Level {
-public:
-    static const char WALL           = '#',
-                      FLOOR          = '-',
-                      BOX            = '$',
-                      BOX_ON_GOAL    = '*',
-                      GOAL           = '.',
-                      PLAYER         = '@',
-                      PLAYER_ON_GOAL = '+';
-
-    Level() {level_index = 0;}
-    Level(size_t height, size_t width, char *data)
-        : rows(height), columns(width), data{data} {}
-
-    void load(size_t offset = 0);
-    void unload();
-    bool is_cell_inside(int row, int column);
-    char& get_cell(size_t row, size_t column);
-    void set_cell(size_t row, size_t column, char cell);
-    void if_solved();
-
-    size_t get_index() { return level_index; }
-    size_t height() { return rows; }
-    size_t width() {return columns; }
-private:
-    size_t rows, columns;
-    char *data;
-    size_t level_index;
-};
 
 char LEVEL_1_DATA[] = {
     ' ', ' ', ' ', ' ', '#', '#', '#', '#', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
@@ -104,25 +66,6 @@ Level level;
 
 /* Player Data */
 
-class Player {
-public:
-    void setImage(Texture2D texture);
-    void spawn(size_t row, size_t column);
-    void move(size_t dx, size_t dy);
-    void draw();
-
-    size_t get_row() {return row;}
-    size_t get_column() {return column;}
-
-    ~Player() {
-        UnloadTexture(image);
-    }
-private:
-    size_t row, column;
-    Texture2D image;
-    std::stack<vector2> movements;
-};
-
 Player player;
 
 /* Graphics Metrics */
@@ -138,32 +81,19 @@ float cell_size;
 float shift_to_center_cell_by_x;
 float shift_to_center_cell_by_y;
 
-/* Fonts */
-
-Font menu_font;
-
 /* Menu Text Parameters */
 
-const std::string MENU_TITLE     = "Sokoban";
-const float MENU_TITLE_FONT_SIZE = 200.0f;
-const float MENU_TITLE_Y_SHIFT   = 10.0f;
-const Color MENU_TITLE_COLOR     = RED;
-
-const std::string MENU_SUBTITLE     = "Press Enter to start the game";
-const float MENU_SUBTITLE_FONT_SIZE = 30.0f;
-const float MENU_SUBTITLE_Y_SHIFT   = 80.0f;
-const Color MENU_SUBTITLE_COLOR     = WHITE;
-
-/* Game Text Parameters */
-
-const float GAME_LEVEL_FONT_SIZE = 70.0f;
-const float GAME_LEVEL_Y_SHIFT   = 30.0f;
-const Color GAME_LEVEL_COLOR1    = GRAY;
-const Color GAME_LEVEL_COLOR2    = WHITE;
+Menu main_menu({"Play", "Choose Level", "Settings", "Exit"}, WHITE, GRAY, 50.0f, {0.2f, 0.4f}, {0.0f, 0.075f});
+Text menu_title("Catastrophic", WHITE, 75.0f, {0.2f, 0.25f});
+Text menu_subtitle("Press Enter to start the game", WHITE, 30.0f, {0.5f, 0.6f});
+Text pause("Press R to restart the level", WHITE, 30.0f);
+Text victory_title("You Won!", RED, 200.0f);
+Text victory_subtitle("Press Enter to go back to menu", WHITE, 30.0f, {0.5f, 0.6f});
 
 /* Images and Sprites */
 
-Texture2D wall_image;
+Texture2D wall_image1;
+Texture2D wall_image2;
 Texture2D floor_image;
 Texture2D goal_image;
 Texture2D box_image;
@@ -184,13 +114,6 @@ struct sprite {
 Sound goal_sound;
 Sound exit_sound;
 
-/* Reload Request Text Parameters */
-
-const std::string RELOAD_REQ_TITLE     = "Press R to restart the level";
-const float RELOAD_REQ_TITLE_FONT_SIZE = 30.0f;
-const float RELOAD_REQ_TITLE_Y_SHIFT   = 0.0f;
-const Color RELOAD_REQ_TITLE_COLOR     = WHITE;
-
 /* Victory Menu Background */
 
 struct victory_ball {
@@ -206,18 +129,6 @@ const float VICTORY_BALL_MAX_RADIUS = 3.0f;
 const Color VICTORY_BALL_COLOR      = { 180, 180, 180, 255 };
 const unsigned char VICTORY_BALL_TRAIL_TRANSPARENCY = 10;
 victory_ball victory_balls[VICTORY_BALL_COUNT];
-
-/* Victory Menu Text Parameters */
-
-const std::string VICTORY_TITLE     = "You Won!";
-const float VICTORY_TITLE_FONT_SIZE = 200.0f;
-const float VICTORY_TITLE_Y_SHIFT   = 10.0f;
-const Color VICTORY_TITLE_COLOR     = RED;
-
-const std::string VICTORY_SUBTITLE     = "Press Enter to go back to menu";
-const float VICTORY_SUBTITLE_FONT_SIZE = 30.0f;
-const float VICTORY_SUBTITLE_Y_SHIFT   = 80.0f;
-const Color VICTORY_SUBTITLE_COLOR     = WHITE;
 
 /* Frame Counter */
 

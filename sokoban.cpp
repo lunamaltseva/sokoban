@@ -29,6 +29,8 @@ void update_game() {
             } else if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
                 player.move(1, 0);
                 return;
+            } else if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_Z) || IsKeyPressed(KEY_U)) {
+                player.undo_move();
             } else if (IsKeyPressed(KEY_ESCAPE)) {
                 game_state = RELOAD_REQ_STATE;
             }

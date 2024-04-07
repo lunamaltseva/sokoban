@@ -11,29 +11,23 @@
 
 #include <string>
 #include <cmath>
+#include <cstdlib>
+
+void Text::draw() {
+    dimensions = MeasureTextEx(*font, text.c_str(), size, spacing);
+
+    Vector2 pos = {
+            (screen_width *offsetPercent.x)-(0.5f*dimensions.x),
+            (screen_height*offsetPercent.y)-(0.5f*dimensions.y)
+    };
+    DrawTextEx(*font, text.c_str(), pos, dimensions.y, spacing, color);
+}
 
 void draw_menu() {
     ClearBackground(BLACK);
-
-    const char *title = MENU_TITLE.c_str();
-    const float title_font_size = MENU_TITLE_FONT_SIZE * screen_scale;
-    const float title_y_shift   = MENU_TITLE_Y_SHIFT   * screen_scale;
-    Vector2 title_size = MeasureTextEx(menu_font, title, title_font_size, 1);
-    Vector2 title_position = {
-        (screen_width - title_size.x) * 0.5f,
-        screen_height * 0.5f - title_size.y * 0.5f - title_y_shift
-    };
-    DrawTextEx(menu_font, title, title_position, title_font_size, 1, MENU_TITLE_COLOR);
-
-    const char *subtitle = MENU_SUBTITLE.c_str();
-    const float subtitle_font_size = MENU_SUBTITLE_FONT_SIZE * screen_scale;
-    const float subtitle_y_shift   = MENU_SUBTITLE_Y_SHIFT   * screen_scale;
-    Vector2 subtitle_size = MeasureTextEx(menu_font, subtitle, subtitle_font_size, 1);
-    Vector2 subtitle_position = {
-        (screen_width - subtitle_size.x) * 0.5f,
-        screen_height * 0.5f - subtitle_size.y * 0.5f + subtitle_y_shift
-    };
-    DrawTextEx(menu_font, subtitle, subtitle_position, subtitle_font_size, 1, MENU_SUBTITLE_COLOR);
+    menu_title.draw();
+    main_menu.draw();
+    main_menu.run();
 }
 
 void derive_graphics_metrics_from_loaded_level() {
@@ -54,8 +48,14 @@ void derive_graphics_metrics_from_loaded_level() {
     shift_to_center_cell_by_y = (screen_height - level_height) * 0.5f;
 }
 
+Texture2D wall_image() {
+    if (rand()%3==0) return wall_image2;
+    else             return wall_image1;
+}
+
 void draw_loaded_level() {
     ClearBackground(BLACK);
+    srand(42);
 
     for (size_t row = 0; row < level.height(); ++row) {
         for (size_t column = 0; column < level.width(); ++column) {
@@ -65,7 +65,7 @@ void draw_loaded_level() {
             char cell = level.get_cell(row, column);
             switch (cell) {
                 case Level::WALL:
-                    draw_image(wall_image, x, y, cell_size);
+                    draw_image(wall_image(), x, y, cell_size);
                     break;
                 case Level::GOAL:
                     if (!(player.get_row() == row && player.get_column() == column))
@@ -92,16 +92,7 @@ void Player::draw() {
 
 void draw_reload_req_menu() {
     ClearBackground(BLACK);
-
-    const char *title = RELOAD_REQ_TITLE.c_str();
-    const float title_font_size = RELOAD_REQ_TITLE_FONT_SIZE * screen_scale;
-    const float title_y_shift   = RELOAD_REQ_TITLE_Y_SHIFT   * screen_scale;
-    Vector2 title_size = MeasureTextEx(menu_font, title, title_font_size, 1);
-    Vector2 title_position = {
-        (screen_width - title_size.x) * 0.5f,
-        screen_height * 0.5f - title_size.y * 0.5f + title_y_shift
-    };
-    DrawTextEx(menu_font, title, title_position, title_font_size, 1, RELOAD_REQ_TITLE_COLOR);
+    pause.draw();
 }
 
 void create_victory_menu_background() {
@@ -158,25 +149,8 @@ void draw_victory_menu() {
     animate_victory_menu_background();
     draw_victory_menu_background();
 
-    const char *title = VICTORY_TITLE.c_str();
-    const float title_font_size = VICTORY_TITLE_FONT_SIZE * screen_scale;
-    const float title_y_shift   = VICTORY_TITLE_Y_SHIFT   * screen_scale;
-    Vector2 title_size = MeasureTextEx(menu_font, title, title_font_size, 1);
-    Vector2 title_position = {
-        (screen_width - title_size.x) * 0.5f,
-        screen_height * 0.5f - title_size.y * 0.5f - title_y_shift
-    };
-    DrawTextEx(menu_font, title, title_position, title_font_size, 1, VICTORY_TITLE_COLOR);
-
-    const char *subtitle = VICTORY_SUBTITLE.c_str();
-    const float subtitle_font_size = VICTORY_SUBTITLE_FONT_SIZE * screen_scale;
-    const float subtitle_y_shift   = VICTORY_SUBTITLE_Y_SHIFT   * screen_scale;
-    Vector2 subtitle_size = MeasureTextEx(menu_font, subtitle, subtitle_font_size, 1);
-    Vector2 subtitle_position = {
-        (screen_width - subtitle_size.x) * 0.5f,
-        screen_height * 0.5f - subtitle_size.y * 0.5f + subtitle_y_shift
-    };
-    DrawTextEx(menu_font, subtitle, subtitle_position, subtitle_font_size, 1, VICTORY_SUBTITLE_COLOR);
+    victory_title.draw();
+    victory_subtitle.draw();
 }
 
 #endif // GRAPHICS_H

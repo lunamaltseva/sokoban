@@ -17,7 +17,8 @@ void unload_fonts() {
 }
 
 void load_images() {
-    wall_image        = LoadTexture("data/images/wall.png");
+    wall_image1        = LoadTexture("data/images/wall/spruce1.png");
+    wall_image2        = LoadTexture("data/images/wall/spruce2.png");
     floor_image       = LoadTexture("data/images/floor.png");
     goal_image        = LoadTexture("data/images/goal.png");
     box_image         = LoadTexture("data/images/box.png");
@@ -26,7 +27,8 @@ void load_images() {
 }
 
 void unload_images() {
-    UnloadTexture(wall_image);
+    UnloadTexture(wall_image1);
+    UnloadTexture(wall_image2);
     UnloadTexture(floor_image);
     UnloadTexture(goal_image);
     UnloadTexture(box_image);
