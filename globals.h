@@ -81,12 +81,42 @@ float cell_size;
 float shift_to_center_cell_by_x;
 float shift_to_center_cell_by_y;
 
+/* Game State */
+
+enum game_state {
+    MENU_STATE,
+    SELECT_LEVEL_STATE,
+    OPTION_STATE,
+    GAME_STATE,
+    RELOAD_REQ_STATE,
+    VICTORY_STATE
+};
+
+game_state game_state = MENU_STATE;
+
 /* Menu Text Parameters */
 
-Menu main_menu({"Play", "Choose Level", "Settings", "Exit"}, WHITE, GRAY, 50.0f, {0.2f, 0.4f}, {0.0f, 0.075f});
+Menu main_menu({
+    {"Play",         [] {game_state = GAME_STATE; level.unload(); level.load();}},
+    {"Choose Level", [] {game_state = SELECT_LEVEL_STATE;}},
+    {"Settings",     [] {game_state = OPTION_STATE;}},
+    {"Exit",         [] {CloseWindow();}}
+    },               [] {CloseWindow();}, WHITE, GRAY, 50.0f, {0.2f, 0.4f}, {0.0f, 0.075f});
+
 Text menu_title("Catastrophic", WHITE, 75.0f, {0.2f, 0.25f});
-Text menu_subtitle("Press Enter to start the game", WHITE, 30.0f, {0.5f, 0.6f});
-Text pause("Press R to restart the level", WHITE, 30.0f);
+
+Menu select_level_menu({
+    {"Level 1", [] {level.load();}},
+    {"Level 2", [] {level.load(1);}},
+    {"Level 3", [] {level.load(2);}}
+    },          [] {game_state = MENU_STATE;}, WHITE, GRAY, 50.0f, {0.35f, 0.475f}, {0.1f, 0.0f});
+
+Menu pause({
+    {"Continue",  [] {game_state = GAME_STATE;}},
+    {"Restart",   [] {level.unload(); level.load();}},
+    {"Main menu", [] {game_state = MENU_STATE; level.reset();}}
+},                [] {game_state = GAME_STATE;});
+
 Text victory_title("You Won!", RED, 200.0f);
 Text victory_subtitle("Press Enter to go back to menu", WHITE, 30.0f, {0.5f, 0.6f});
 
@@ -133,26 +163,13 @@ victory_ball victory_balls[VICTORY_BALL_COUNT];
 /* Frame Counter */
 
 size_t game_frame = 0;
-
-/* Game State */
-
-enum game_state {
-    MENU_STATE,
-    GAME_STATE,
-    RELOAD_REQ_STATE,
-    VICTORY_STATE
-};
-
-game_state game_state = MENU_STATE;
+size_t runtime = 0;
 
 /* Forward Declarations */
 
 // GRAPHICS_H
 
-void draw_menu();
 void derive_graphics_metrics_from_loaded_level();
-void draw_loaded_level();
-void draw_reload_req_menu();
 void create_victory_menu_background();
 void animate_victory_menu_background();
 void draw_victory_menu_background();

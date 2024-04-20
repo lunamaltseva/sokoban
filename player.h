@@ -60,6 +60,7 @@ void Player::move(size_t dx, size_t dy) {
     }
 
     movements.push_back({dx, dy});
+    runtime = 0;
 }
 
 void Player::undo_move() {
@@ -91,6 +92,7 @@ void Player::undo_move() {
 
     row    -= d_pos.y;
     column -= d_pos.x;
+    runtime = 0;
 }
 
 #endif // PLAYER_H

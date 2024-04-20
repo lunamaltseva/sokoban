@@ -8,6 +8,8 @@
 #include <cstddef>
 
 void Level::load(size_t offset) {
+    game_state = GAME_STATE;
+
     level_index+=offset;
     if (level_index >= LEVEL_COUNT) {
         level_index = 0;
@@ -35,6 +37,17 @@ void Level::load(size_t offset) {
     }
 
     derive_graphics_metrics_from_loaded_level();
+}
+
+int Level::count(char object) {
+    int instances = 0;
+    for (size_t row = 0; row < rows; ++row) {
+        for (size_t column = 0; column < columns; ++column) {
+            char cell = data[row * columns + column];
+            if (cell == object) instances++;
+        }
+    }
+    return instances;
 }
 
 void Level::unload() {

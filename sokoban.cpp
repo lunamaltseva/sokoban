@@ -10,42 +10,38 @@
 void update_game() {
     switch (game_state) {
         case MENU_STATE:
-            SetExitKey(KEY_ESCAPE);
-            if (IsKeyPressed(KEY_ENTER)) {
-                game_state = GAME_STATE;
-            }
             break;
         case GAME_STATE:
-            SetExitKey(0);
-            if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) {
+            runtime++;
+            if (runtime < 20 && GetKeyPressed()==0) break;
+
+            if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
                 player.move(0, -1);
                 return;
-            } else if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) {
+            } else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
                 player.move(0, 1);
                 return;
-            } else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
+            } else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
                 player.move(-1, 0);
                 return;
-            } else if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
+            } else if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
                 player.move(1, 0);
                 return;
-            } else if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_Z) || IsKeyPressed(KEY_U)) {
+            } else if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyDown(KEY_Z) || IsKeyDown(KEY_U)) {
                 player.undo_move();
-            } else if (IsKeyPressed(KEY_ESCAPE)) {
+            } if (mv_back()) {
                 game_state = RELOAD_REQ_STATE;
+                game_frame = 0;
             }
             break;
         case RELOAD_REQ_STATE:
-            if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_ENTER)) {
-                game_state = GAME_STATE;
-            } else if (IsKeyPressed(KEY_R)) {
+            if (IsKeyPressed(KEY_R)) {
                 level.unload();
                 level.load(0);
                 game_state = GAME_STATE;
             }
             break;
         case VICTORY_STATE:
-            SetExitKey(KEY_ESCAPE);
             if (IsKeyPressed(KEY_ENTER)) {
                 game_state = MENU_STATE;
             }
@@ -58,14 +54,19 @@ void draw_game() {
 
     switch (game_state) {
         case MENU_STATE:
-            draw_menu();
+            main_menu.run();
             break;
         case GAME_STATE:
+            draw_GUI();
             draw_loaded_level();
             player.draw();
             break;
+        case SELECT_LEVEL_STATE:
+            select_level_menu.run();
+            main_menu.draw();
+            break;
         case RELOAD_REQ_STATE:
-            draw_reload_req_menu();
+            if (game_frame != 1) pause.run();
             break;
         case VICTORY_STATE:
             draw_victory_menu();
@@ -79,14 +80,17 @@ int main() {
     SetTargetFPS(60);
     HideCursor();
     ToggleFullscreen();
+    SetExitKey(0);
 
     load_fonts();
     load_images();
     load_sounds();
-    level.load();
+
+    derive_graphics_metrics_from_loaded_level();
 
     while (!WindowShouldClose()) {
         BeginDrawing();
+        ClearBackground(BLACK);
 
         update_game();
         draw_game();

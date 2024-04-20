@@ -23,11 +23,14 @@ void Text::draw() {
     DrawTextEx(*font, text.c_str(), pos, dimensions.y, spacing, color);
 }
 
-void draw_menu() {
-    ClearBackground(BLACK);
-    menu_title.draw();
-    main_menu.draw();
-    main_menu.run();
+void draw_GUI() {
+    int boxes = level.count(Level::BOX);
+    int boxes_on_goals = level.count(Level::BOX_ON_GOAL);
+    boxes+=boxes_on_goals;
+
+    std::string progress_counter = std::to_string(boxes_on_goals) + "/" + std::to_string(boxes);
+    Text progress(progress_counter, WHITE, cell_size, {0.9f, 0.9f});
+    progress.draw();
 }
 
 void derive_graphics_metrics_from_loaded_level() {
@@ -88,11 +91,6 @@ void Player::draw() {
     float x = shift_to_center_cell_by_x + static_cast<float>(column) * cell_size;
     float y = shift_to_center_cell_by_y + static_cast<float>(row)    * cell_size;
     draw_image(image, x, y, cell_size);
-}
-
-void draw_reload_req_menu() {
-    ClearBackground(BLACK);
-    pause.draw();
 }
 
 void create_victory_menu_background() {

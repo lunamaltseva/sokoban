@@ -5,13 +5,14 @@
 #include <string>
 #include <cstddef>
 #include <vector>
+#include <functional>
 
 bool mv_down() {
-    return (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN));
+    return (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT));
 }
 
 bool mv_up() {
-    return (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP));
+    return (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT));
 }
 
 bool mv_forward() {
@@ -62,6 +63,8 @@ public:
     char& get_cell(size_t row, size_t column);
     void set_cell(size_t row, size_t column, char cell);
     void if_solved();
+    void reset() {level_index = 0; unload();};
+    int count(char object);
 
     size_t get_index() { return level_index; }
     size_t height() { return rows; }
@@ -93,14 +96,20 @@ private:
     std::vector<bool> was_box_moved;
 };
 
+struct Option {
+    std::string text;
+    std::function<void()> forward;
+};
+
 class Menu {
 public:
-    Menu(std::vector<std::string> entry, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 1.0f, Font *font = &menu_font)
-            : entry(entry), colorActive(colorActive), colorInactive(colorInactive), size(size), font(font), spacing(spacing), offsetPercentInitial(offset), offsetPercentAdditional(offsetAdd), selection(0) {}
+    Menu(std::vector<Option> entry, std::function<void()> backward, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 1.0f, Font *font = &menu_font)
+            : entry(entry), backward(backward), colorActive(colorActive), colorInactive(colorInactive), size(size), font(font), spacing(spacing), offsetPercentInitial(offset), offsetPercentAdditional(offsetAdd), selection(0) {}
+
     void draw() {
         for (int i = 0; i < entry.size(); i++) {
             Text text(
-                    entry[i],
+                    entry[i].text,
                     (i == selection ? colorActive : colorInactive),
                     size,
                     {offsetPercentInitial.x + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i},
@@ -110,15 +119,24 @@ public:
             text.draw();
         }
     }
+
     void run() {
         if (mv_down())    {if (entry.size() <= ++selection) selection = 0; }
         else if (mv_up()) {if (0 > --selection) selection = entry.size()-1;}
+        else if (mv_forward()) {entry[selection].forward();}
+        else if (mv_back()) {backward();}
+        this->draw();
+    }
+
+    int selected() {
+        return selection;
     }
 private:
-    std::vector<std::string> entry;
+    std::vector<Option> entry;
+    std::function<void()> backward;
     int selection;
     float size, spacing;
-    Vector2 offsetPercentInitial, offsetPercentAdditional, dimensions;
+    Vector2 offsetPercentInitial, offsetPercentAdditional;
     Color colorActive, colorInactive;
     Font* font;
 };

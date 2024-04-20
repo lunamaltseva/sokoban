@@ -9,7 +9,7 @@
 #include <cassert>
 
 void load_fonts() {
-    menu_font = LoadFontEx("data/fonts/ARCADECLASSIC.TTF", 128, nullptr, 0);
+    menu_font = LoadFontEx(nullptr, 128, nullptr, 0);
 }
 
 void unload_fonts() {
@@ -17,8 +17,8 @@ void unload_fonts() {
 }
 
 void load_images() {
-    wall_image1        = LoadTexture("data/images/wall/spruce1.png");
-    wall_image2        = LoadTexture("data/images/wall/spruce2.png");
+    wall_image1       = LoadTexture("data/images/wall/spruce1.png");
+    wall_image2       = LoadTexture("data/images/wall/spruce2.png");
     floor_image       = LoadTexture("data/images/floor.png");
     goal_image        = LoadTexture("data/images/goal.png");
     box_image         = LoadTexture("data/images/box.png");
