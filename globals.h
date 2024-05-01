@@ -53,16 +53,9 @@ char LEVEL_3_DATA[] = {
 
 Level LEVEL_3 = {10, 17,LEVEL_3_DATA};
 
-const size_t LEVEL_COUNT = 3;
-Level LEVELS[LEVEL_COUNT] = {
-    LEVEL_1,
-    LEVEL_2,
-    LEVEL_3
-};
-
 /* Loaded Level Data */
-
-Level level;
+std::vector<Level> levels = {LEVEL_1, LEVEL_2, LEVEL_3};
+LevelManager levelManager(levels);
 
 /* Player Data */
 
@@ -97,7 +90,7 @@ game_state game_state = MENU_STATE;
 /* Menu Text Parameters */
 
 Menu main_menu({
-    {"Play",         [] {game_state = GAME_STATE; level.unload(); level.load();}},
+    {"Play",         [] {game_state = GAME_STATE; levelManager.load();}},
     {"Choose Level", [] {game_state = SELECT_LEVEL_STATE;}},
     {"Settings",     [] {game_state = OPTION_STATE;}},
     {"Exit",         [] {CloseWindow();}}
@@ -106,15 +99,15 @@ Menu main_menu({
 Text menu_title("Catastrophic", WHITE, 75.0f, {0.2f, 0.25f});
 
 Menu select_level_menu({
-    {"Level 1", [] {level.load();}},
-    {"Level 2", [] {level.load(1);}},
-    {"Level 3", [] {level.load(2);}}
+    {"Level 1", [] {levelManager.load();}},
+    {"Level 2", [] {levelManager.load(1);}},
+    {"Level 3", [] {levelManager.load(2);}}
     },          [] {game_state = MENU_STATE;}, WHITE, GRAY, 50.0f, {0.35f, 0.475f}, {0.1f, 0.0f});
 
 Menu pause({
     {"Continue",  [] {game_state = GAME_STATE;}},
-    {"Restart",   [] {level.unload(); level.load();}},
-    {"Main menu", [] {game_state = MENU_STATE; level.reset();}}
+    {"Restart",   [] {levelManager.unload(); levelManager.load();}},
+    {"Main menu", [] {game_state = MENU_STATE; levelManager.reset();}}
 },                [] {game_state = GAME_STATE;});
 
 Text victory_title("You Won!", RED, 200.0f);
@@ -160,10 +153,6 @@ const Color VICTORY_BALL_COLOR      = { 180, 180, 180, 255 };
 const unsigned char VICTORY_BALL_TRAIL_TRANSPARENCY = 10;
 victory_ball victory_balls[VICTORY_BALL_COUNT];
 
-/* Frame Counter */
-
-size_t game_frame = 0;
-size_t runtime = 0;
 
 /* Forward Declarations */
 

@@ -7,6 +7,9 @@
 #include <vector>
 #include <functional>
 
+size_t game_frame = 0;
+size_t runtime = 0;
+
 bool mv_down() {
     return (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT));
 }
@@ -23,6 +26,11 @@ bool mv_back() {
     return (IsKeyPressed(KEY_ESCAPE));
 }
 
+int key_recently_pressed = 0;
+bool is_key(int check) {
+    return IsKeyDown(check) && key_recently_pressed == check;
+}
+
 Font menu_font;
 class Text {
 public:
@@ -35,6 +43,37 @@ private:
     Vector2 offsetPercent, dimensions;
     Color color;
     Font* font;
+};
+
+void draw_image(Texture2D image, float x, float y, float size);
+
+class Slide {
+public:
+    Slide(const std::string &text, const Texture2D picture)
+        : caption{Text(text, WHITE, 30.0f, {0.9f, 0.5f})}, picture{picture} { }
+    void draw() {
+        caption.draw();
+        float minimum = std::min(GetScreenHeight(), GetScreenWidth())*0.8f;
+        draw_image(picture, (GetScreenWidth()-minimum)*0.5f, (GetScreenHeight()-minimum)*0.5f, minimum);
+    }
+private:
+    Text caption;
+    Texture2D picture;
+};
+
+class Slideshow {
+public:
+    explicit Slideshow(int time) : timePerSlide(time) {}
+    explicit Slideshow(std::vector<Slide> &slides, int time) : slides(slides), timePerSlide(time) {}
+    void add(const Slide &slide) { slides.push_back(slide); }
+    void draw() {
+        slides[itr].draw();
+        if (runtime > timePerSlide) itr++;
+    }
+private:
+    int timePerSlide;
+    int itr = 0;
+    std::vector<Slide> slides;
 };
 
 struct vector2 {
@@ -53,27 +92,48 @@ public:
             PLAYER         = '@',
             PLAYER_ON_GOAL = '+';
 
-    Level() {level_index = 0;}
+    Level() {}
     Level(size_t height, size_t width, char *data)
             : rows(height), columns(width), data{data} {}
 
-    void load(size_t offset = 0);
-    void unload();
     bool is_cell_inside(int row, int column);
     char& get_cell(size_t row, size_t column);
     void set_cell(size_t row, size_t column, char cell);
     void if_solved();
-    void reset() {level_index = 0; unload();};
     int count(char object);
 
-    size_t get_index() { return level_index; }
     size_t height() { return rows; }
-    size_t width() {return columns; }
+    size_t width() { return columns; }
+    friend class LevelManager;
 private:
     size_t rows, columns;
     char *data;
-    size_t level_index;
 };
+
+class LevelManager {
+public:
+    LevelManager(std::vector<Level> &list) { levels = list; }
+    static void add(Level &level) {levels.push_back(level);}
+
+    static Level* getInstance() {
+        if (instance == nullptr)
+            instance = new Level();
+        return instance;
+    }
+
+    void load(size_t offset = 0);
+    void unload();
+    void reset() { index = 0; unload();};
+    static size_t get_index() { return index; }
+private:
+    static Level* instance;
+    static size_t index;
+    static std::vector<Level> levels;
+};
+
+Level* LevelManager::instance = nullptr;
+size_t LevelManager::index = 0;
+std::vector<Level> LevelManager::levels;
 
 class Player {
 public:

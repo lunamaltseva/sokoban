@@ -7,31 +7,33 @@
 
 #include <cstddef>
 
-void Level::load(size_t offset) {
+void LevelManager::load(size_t offset) {
     game_state = GAME_STATE;
 
-    level_index+=offset;
-    if (level_index >= LEVEL_COUNT) {
-        level_index = 0;
+    index+=offset;
+    if (index >= levels.size()) {
+        index = 0;
         game_state = VICTORY_STATE;
         create_victory_menu_background();
     }
 
-    rows    = LEVELS[Level::get_index()].rows;
-    columns = LEVELS[Level::get_index()].columns;
-    data = new char[rows * columns];
+    Level* level = LevelManager::getInstance();
 
-    for (size_t row = 0; row < rows; ++row) {
-        for (size_t column = 0; column < columns; ++column) {
-            char cell = LEVELS[Level::get_index()].data[row * columns + column];
-            if (cell == PLAYER) {
-                this->set_cell(row, column, FLOOR);
+    level->rows    = levels[index].rows;
+    level->columns = levels[index].columns;
+    level->data = new char[level->rows * level->columns];
+
+    for (size_t row = 0; row < level->rows; ++row) {
+        for (size_t column = 0; column < level->columns; ++column) {
+            char cell = levels[index].data[row * level->columns + column];
+            if (cell == Level::PLAYER) {
+                level->set_cell(row, column, Level::FLOOR);
                 player.spawn(row, column);
-            } else if (cell == PLAYER_ON_GOAL) {
-                this->set_cell(row, column, GOAL);
+            } else if (cell == Level::PLAYER_ON_GOAL) {
+                level->set_cell(row, column, Level::GOAL);
                 player.spawn(row, column);
             } else {
-                this->set_cell(row, column, cell);
+                level->set_cell(row, column, cell);
             }
         }
     }
@@ -50,12 +52,14 @@ int Level::count(char object) {
     return instances;
 }
 
-void Level::unload() {
-    rows    = 0;
-    columns = 0;
+void LevelManager::unload() {
+    Level* level = LevelManager::getInstance();
 
-    delete[] data;
-    data = nullptr;
+    level->rows    = 0;
+    level->columns = 0;
+
+    delete[] level->data;
+    level->data = nullptr;
 }
 
 bool Level::is_cell_inside(int row, int column) {
@@ -72,9 +76,9 @@ void Level::set_cell(size_t row, size_t column, char cell) {
 
 void Level::if_solved() {
     bool level_solved = true;
-    for (size_t row = 0; level_solved && row < level.height(); ++row) {
-        for (size_t column = 0; level_solved && column < level.width(); ++column) {
-            char cell_to_test = level.get_cell(row, column);
+    for (size_t row = 0; level_solved && row < height(); ++row) {
+        for (size_t column = 0; level_solved && column < width(); ++column) {
+            char cell_to_test = get_cell(row, column);
             if (cell_to_test == Level::GOAL) {
                 level_solved = false;
             }
@@ -82,8 +86,8 @@ void Level::if_solved() {
     }
 
     if (level_solved) {
-        level.unload();
-        level.load(1);
+        levelManager.unload();
+        levelManager.load(1);
         play_sound(exit_sound);
     }
 }

@@ -24,8 +24,9 @@ void Text::draw() {
 }
 
 void draw_GUI() {
-    int boxes = level.count(Level::BOX);
-    int boxes_on_goals = level.count(Level::BOX_ON_GOAL);
+    Level *level = LevelManager::getInstance();
+    int boxes = level->count(Level::BOX);
+    int boxes_on_goals = level->count(Level::BOX_ON_GOAL);
     boxes+=boxes_on_goals;
 
     std::string progress_counter = std::to_string(boxes_on_goals) + "/" + std::to_string(boxes);
@@ -34,19 +35,21 @@ void draw_GUI() {
 }
 
 void derive_graphics_metrics_from_loaded_level() {
+    Level *level = LevelManager::getInstance();
+
     screen_width  = static_cast<float>(GetScreenWidth());
     screen_height = static_cast<float>(GetScreenHeight());
 
     cell_size = std::min(
-        screen_width  / static_cast<float>(level.width()),
-        screen_height / static_cast<float>(level.height())
+        screen_width  / static_cast<float>(level->width()),
+        screen_height / static_cast<float>(level->height())
     ) * CELL_SCALE;
     screen_scale = std::min(
         screen_width,
         screen_height
     ) / SCREEN_SCALE_DIVISOR;
-    float level_width  = static_cast<float>(level.width()) * cell_size;
-    float level_height = static_cast<float>(level.height())    * cell_size;
+    float level_width  = static_cast<float>(level->width()) * cell_size;
+    float level_height = static_cast<float>(level->height())    * cell_size;
     shift_to_center_cell_by_x = (screen_width - level_width)   * 0.5f;
     shift_to_center_cell_by_y = (screen_height - level_height) * 0.5f;
 }
@@ -58,14 +61,15 @@ Texture2D wall_image() {
 
 void draw_loaded_level() {
     ClearBackground(BLACK);
+    Level *level = LevelManager::getInstance();
     srand(42);
 
-    for (size_t row = 0; row < level.height(); ++row) {
-        for (size_t column = 0; column < level.width(); ++column) {
+    for (size_t row = 0; row < level->height(); ++row) {
+        for (size_t column = 0; column < level->width(); ++column) {
             float x = shift_to_center_cell_by_x + static_cast<float>(column) * cell_size;
             float y = shift_to_center_cell_by_y + static_cast<float>(row)    * cell_size;
 
-            char cell = level.get_cell(row, column);
+            char cell = level->get_cell(row, column);
             switch (cell) {
                 case Level::WALL:
                     draw_image(wall_image(), x, y, cell_size);

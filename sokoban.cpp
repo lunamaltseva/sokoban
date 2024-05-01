@@ -1,33 +1,41 @@
 #include "raylib.h"
-
 #include "globals.h"
 #include "levels.h"
 #include "player.h"
 #include "graphics.h"
 #include "images.h"
 #include "sounds.h"
+#include "lunalib.h"
 
 void update_game() {
     switch (game_state) {
         case MENU_STATE:
             break;
         case GAME_STATE:
-            runtime++;
-            if (runtime < 20 && GetKeyPressed()==0) break;
+            int key_pressed;
+            key_pressed = GetKeyPressed();
 
-            if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
+            if (key_pressed != 0)
+                key_recently_pressed = key_pressed;
+
+            bool isAnyDown; isAnyDown = IsKeyDown(KEY_W) || IsKeyDown(KEY_A) || IsKeyDown(KEY_S) || IsKeyDown(KEY_D) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_U);
+
+            if (!isAnyDown) runtime = 20;
+            else if (++runtime < 20) break;
+
+            if (is_key(KEY_W) || is_key(KEY_UP)) {
                 player.move(0, -1);
                 return;
-            } else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
+            } else if (is_key(KEY_S) || is_key(KEY_DOWN)) {
                 player.move(0, 1);
                 return;
-            } else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
+            } else if (is_key(KEY_A) || is_key(KEY_LEFT)) {
                 player.move(-1, 0);
                 return;
-            } else if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
+            } else if (is_key(KEY_D) || is_key(KEY_RIGHT)) {
                 player.move(1, 0);
                 return;
-            } else if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyDown(KEY_Z) || IsKeyDown(KEY_U)) {
+            } else if (is_key(KEY_U)) {
                 player.undo_move();
             } if (mv_back()) {
                 game_state = RELOAD_REQ_STATE;
@@ -36,8 +44,8 @@ void update_game() {
             break;
         case RELOAD_REQ_STATE:
             if (IsKeyPressed(KEY_R)) {
-                level.unload();
-                level.load(0);
+                levelManager.unload();
+                levelManager.load(0);
                 game_state = GAME_STATE;
             }
             break;
@@ -99,7 +107,7 @@ int main() {
     }
     CloseWindow();
 
-    level.unload();
+    levelManager.unload();
     unload_sounds();
     unload_images();
     unload_fonts();
