@@ -31,8 +31,23 @@ void draw_GUI() {
     boxes+=boxes_on_goals;
 
     std::string progress_counter = std::to_string(boxes_on_goals) + "/" + std::to_string(boxes);
-    Text progress(progress_counter, WHITE, cell_size, {0.9f, 0.9f});
+    std::string movements = std::to_string(player.getSteps());
+    Text progress(progress_counter, WHITE, 80.0f, {0.9f, 0.9f});
+    Text steps(movements, WHITE, 80.0f, {0.07f, 0.1f});
     progress.draw();
+    steps.draw();
+    draw_image(box_image, screen_width*0.94f, screen_height*0.865f, 80.0f);
+}
+
+void draw_Menu() {
+    Text title("Catastrophic", WHITE, 80.0f, {0.2f, 0.2f}, 4.0f);
+    Text byline("By @lunamaltseva", GRAY, 30.0f, {0.2f, 0.85f}, 2.0f);
+    title.draw();
+    byline.draw();
+    int minimum = std::min(screen_width, screen_height);
+    float scale = minimum*0.25f;
+    draw_image(goal_image, screen_width-(scale*1.75f), screen_height-(scale*1.5f), scale);
+    draw_image(player.getImage(), screen_width-(scale*3.0f), screen_height-(scale*1.5f), scale);
 }
 
 void derive_graphics_metrics_from_loaded_level() {
@@ -55,14 +70,41 @@ void derive_graphics_metrics_from_loaded_level() {
     shift_to_center_cell_by_y = (screen_height - level_height) * 0.5f;
 }
 
-Texture2D wall_image(std::vector<Texture2D> &decor) {
-    return decor[rand()%decor.size()];
+Texture2D wall_image() {
+    Texture2D result;
+
+    int access = rand()%3+1;
+    switch(LevelManager::get_index()) {
+        case 0:
+            switch(access) {
+                case 1: result = house1; break;
+                case 2: result = house2; break;
+                case 3: result = house3; break;
+            }
+            break;
+        case 1:
+            switch(access) {
+                case 1: result = city1; break;
+                case 2: result = city2; break;
+                case 3: result = city3; break;
+            }
+            break;
+        case 2:
+            switch(access) {
+                case 1: result = wilderness1; break;
+                case 2: result = wilderness2; break;
+                case 3: result = wilderness3; break;
+            }
+            break;
+    }
+
+    return result;
 }
 
 void draw_loaded_level() {
     ClearBackground(BLACK);
     Level *level = LevelManager::getInstance();
-    srand(42);
+    srand(1);
 
     for (size_t row = 0; row < level->height(); ++row) {
         for (size_t column = 0; column < level->width(); ++column) {
@@ -72,7 +114,7 @@ void draw_loaded_level() {
             char cell = level->get_cell(row, column);
             switch (cell) {
                 case Level::WALL:
-                    draw_image(wall_image(LevelManager::decorations[LevelManager::get_index()].walls), x, y, cell_size);
+                    draw_image(wall_image(), x, y, cell_size);
                     break;
                 case Level::GOAL:
                     if (!(player.get_row() == row && player.get_column() == column))

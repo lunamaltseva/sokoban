@@ -23,6 +23,16 @@ void load_images() {
     goal_image        = LoadTexture("data/images/goal.png");
     box_image         = LoadTexture("data/images/box.png");
     box_on_goal_image = LoadTexture("data/images/box-on-goal.png");
+    house1            = LoadTexture("data/images/wall/house1.png");
+    house2            = LoadTexture("data/images/wall/house2.png");
+    house3            = LoadTexture("data/images/wall/house3.png");
+    city1             = LoadTexture("data/images/wall/town1.png");
+    city2             = LoadTexture("data/images/wall/town2.png");
+    city3             = LoadTexture("data/images/wall/town3.png");
+    wilderness1       = LoadTexture("data/images/wall/wilderness1.png");
+    wilderness2       = LoadTexture("data/images/wall/wilderness2.png");
+    wilderness3       = LoadTexture("data/images/wall/wilderness3.png");
+
     player.setImage(LoadTexture("data/images/player.png"));
 }
 

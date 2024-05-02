@@ -110,20 +110,10 @@ private:
     char *data;
 };
 
-class LevelDecorations {
-public:
-    LevelDecorations(const std::vector<Texture2D> &walls, const std::vector<Texture2D> &floor)
-        : walls{walls}, floor{floor} {}
-
-    std::vector<Texture2D> walls;
-    std::vector<Texture2D> floor;
-};
-
 class LevelManager {
 public:
-    explicit LevelManager(std::vector<Level> &list, std::vector<LevelDecorations> &decor) { levels = list; decorations = decor; }
+    explicit LevelManager(std::vector<Level> &list) { levels = list; }
     static void add(Level &level) {levels.push_back(level);}
-    static void add(LevelDecorations &decoration) {decorations.push_back(decoration);}
 
     static Level* getInstance() {
         if (instance == nullptr)
@@ -140,13 +130,11 @@ private:
     static Level* instance;
     static size_t index;
     static std::vector<Level> levels;
-    static std::vector<LevelDecorations> decorations;
 };
 
 Level* LevelManager::instance = nullptr;
 size_t LevelManager::index = 0;
 std::vector<Level> LevelManager::levels;
-std::vector<LevelDecorations> LevelManager::decorations;
 
 class Player {
 public:
@@ -158,6 +146,8 @@ public:
 
     size_t get_row() {return row;}
     size_t get_column() {return column;}
+    Texture2D getImage() {return image;}
+    int getSteps() {return movements.size();}
 
     ~Player() {
         UnloadTexture(image);

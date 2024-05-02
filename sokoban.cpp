@@ -63,6 +63,7 @@ void draw_game() {
     switch (game_state) {
         case MENU_STATE:
             main_menu.run();
+            draw_Menu();
             break;
         case GAME_STATE:
             draw_GUI();
@@ -72,6 +73,7 @@ void draw_game() {
         case SELECT_LEVEL_STATE:
             select_level_menu.run();
             main_menu.draw();
+            draw_Menu();
             break;
         case RELOAD_REQ_STATE:
             if (game_frame != 1) pause.run();
