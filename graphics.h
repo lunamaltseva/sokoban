@@ -8,6 +8,7 @@
 #include "levels.h"
 #include "player.h"
 #include "utilities.h"
+#include "lunalib.h"
 
 #include <string>
 #include <cmath>
@@ -54,9 +55,8 @@ void derive_graphics_metrics_from_loaded_level() {
     shift_to_center_cell_by_y = (screen_height - level_height) * 0.5f;
 }
 
-Texture2D wall_image() {
-    if (rand()%3==0) return wall_image2;
-    else             return wall_image1;
+Texture2D wall_image(std::vector<Texture2D> &decor) {
+    return decor[rand()%decor.size()];
 }
 
 void draw_loaded_level() {
@@ -72,7 +72,7 @@ void draw_loaded_level() {
             char cell = level->get_cell(row, column);
             switch (cell) {
                 case Level::WALL:
-                    draw_image(wall_image(), x, y, cell_size);
+                    draw_image(wall_image(LevelManager::decorations[LevelManager::get_index()].walls), x, y, cell_size);
                     break;
                 case Level::GOAL:
                     if (!(player.get_row() == row && player.get_column() == column))

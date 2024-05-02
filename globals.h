@@ -51,11 +51,64 @@ char LEVEL_3_DATA[] = {
     '#', '#', '#', '#', '#', '#', '#', '#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '
 };
 
-Level LEVEL_3 = {10, 17,LEVEL_3_DATA};
+Level LEVEL_3 = {10, 17, LEVEL_3_DATA};
 
 /* Loaded Level Data */
+std::vector<Texture2D> houseWalls = {
+        LoadTexture("data/images/wall/house1.png"),
+        LoadTexture("data/images/wall/house2.png"),
+        LoadTexture("data/images/wall/house3.png"),
+        LoadTexture("data/images/wall/house4.png"),
+        LoadTexture("data/images/wall/house5.png"),
+        LoadTexture("data/images/wall/house6.png"),
+        LoadTexture("data/images/wall/house7.png"),
+        LoadTexture("data/images/wall/house8.png"),
+        LoadTexture("data/images/wall/house9.png")
+};
+
+std::vector<Texture2D> cityWalls = {
+        LoadTexture("data/images/wall/city1.png"),
+        LoadTexture("data/images/wall/city2.png"),
+        LoadTexture("data/images/wall/city3.png"),
+        LoadTexture("data/images/wall/city4.png"),
+        LoadTexture("data/images/wall/city5.png"),
+        LoadTexture("data/images/wall/city6.png"),
+        LoadTexture("data/images/wall/city7.png"),
+        LoadTexture("data/images/wall/city8.png"),
+        LoadTexture("data/images/wall/city9.png")
+};
+
+std::vector<Texture2D> wildernessWalls = {
+        LoadTexture("data/images/wall/wilderness1.png"),
+        LoadTexture("data/images/wall/wilderness2.png"),
+        LoadTexture("data/images/wall/wilderness3.png"),
+        LoadTexture("data/images/wall/wilderness4.png"),
+        LoadTexture("data/images/wall/wilderness5.png"),
+        LoadTexture("data/images/wall/wilderness6.png"),
+        LoadTexture("data/images/wall/wilderness7.png"),
+        LoadTexture("data/images/wall/wilderness8.png"),
+        LoadTexture("data/images/wall/wilderness9.png")
+};
+
+std::vector<Texture2D> houseFloor = {
+        LoadTexture("data/images/floor/city_floor.png"),
+};
+
+std::vector<Texture2D> cityFloor = {
+        LoadTexture("data/images/floor/city_floor.png"),
+};
+
+std::vector<Texture2D> wildernessFloor = {
+        LoadTexture("data/images/floor/city_floor.png"),
+};
+
+LevelDecorations house(houseWalls, houseFloor);
+LevelDecorations city(cityWalls, cityFloor);
+LevelDecorations wilderness(wildernessWalls, wildernessFloor);
+
 std::vector<Level> levels = {LEVEL_1, LEVEL_2, LEVEL_3};
-LevelManager levelManager(levels);
+std::vector<LevelDecorations> decorum = {house, city, wilderness};
+LevelManager levelManager(levels, decorum);
 
 /* Player Data */
 
