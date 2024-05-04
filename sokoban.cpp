@@ -20,19 +20,21 @@ void update_game() {
 
             bool isAnyDown; isAnyDown = IsKeyDown(KEY_W) || IsKeyDown(KEY_A) || IsKeyDown(KEY_S) || IsKeyDown(KEY_D) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_U);
 
-            if (!isAnyDown) runtime = 20;
-            else if (++runtime < 20) break;
+            int speed; speed = 60 / options_menu.getValue(4);
 
-            if (is_key(KEY_W) || is_key(KEY_UP)) {
+            if (!isAnyDown) runtime = speed;
+            else if (++runtime < speed) break;
+
+            if (is_key(options_menu.getValue(0))) {
                 player.move(0, -1);
                 return;
-            } else if (is_key(KEY_S) || is_key(KEY_DOWN)) {
+            } else if (is_key(options_menu.getValue(2))) {
                 player.move(0, 1);
                 return;
-            } else if (is_key(KEY_A) || is_key(KEY_LEFT)) {
+            } else if (is_key(options_menu.getValue(1))) {
                 player.move(-1, 0);
                 return;
-            } else if (is_key(KEY_D) || is_key(KEY_RIGHT)) {
+            } else if (is_key(options_menu.getValue(3))) {
                 player.move(1, 0);
                 return;
             } else if (is_key(KEY_U)) {
@@ -74,6 +76,12 @@ void draw_game() {
             select_level_menu.run();
             main_menu.draw();
             draw_Menu();
+            break;
+        case OPTION_STATE:
+            main_menu.draw();
+            draw_Menu();
+            options_menu.run();
+            options_title.draw();
             break;
         case RELOAD_REQ_STATE:
             if (game_frame != 1) pause.run();

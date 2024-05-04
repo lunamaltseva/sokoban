@@ -7,15 +7,12 @@
 
 void load_sounds() {
     InitAudioDevice();
-
-    goal_sound = LoadSound("data/sounds/goal.wav");
-    exit_sound = LoadSound("data/sounds/exit.wav");
+    scroll = LoadSound("data/sounds/scroll.ogg");
+    forward = LoadSound("data/sounds/click.ogg");
+    backout = LoadSound("data/sounds/backout.ogg");
 }
 
 void unload_sounds() {
-    UnloadSound(goal_sound);
-    UnloadSound(exit_sound);
-
     CloseAudioDevice();
 }
 

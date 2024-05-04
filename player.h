@@ -51,7 +51,6 @@ void Player::move(size_t dx, size_t dy) {
             if (target_cell == Level::FLOOR) target_cell = Level::BOX;
             else {
                 target_cell = Level::BOX_ON_GOAL;
-                play_sound(goal_sound);
             }
 
             row    = static_cast<size_t>(next.x);

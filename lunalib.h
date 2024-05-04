@@ -164,6 +164,10 @@ struct Option {
     std::function<void()> forward;
 };
 
+extern Sound scroll;
+extern Sound forward;
+extern Sound backout;
+
 class Menu {
 public:
     Menu(std::vector<Option> entry, std::function<void()> backward, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 1.0f, Font *font = &menu_font)
@@ -171,30 +175,23 @@ public:
 
     void draw() {
         for (int i = 0; i < entry.size(); i++) {
-            Text text(
-                    entry[i].text,
-                    (i == selection ? colorActive : colorInactive),
-                    size,
-                    {offsetPercentInitial.x + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i},
-                    spacing,
-                    font
-            );
+            Text text(entry[i].text, (i == selection ? colorActive : colorInactive), size, {offsetPercentInitial.x + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
             text.draw();
         }
     }
 
     void run() {
-        if (mv_down())    {if (entry.size() <= ++selection) selection = 0; }
-        else if (mv_up()) {if (0 > --selection) selection = entry.size()-1;}
-        else if (mv_forward()) {entry[selection].forward();}
-        else if (mv_back()) {backward();}
+        if (mv_down())         {if (entry.size() <= ++selection) selection = 0; PlaySound(scroll);}
+        else if (mv_up())      {if (0 > --selection) selection = entry.size()-1;PlaySound(scroll);}
+        else if (mv_forward()) {entry[selection].forward();PlaySound(forward);}
+        else if (mv_back())    {backward();PlaySound(backout);}
         this->draw();
     }
 
     int selected() {
         return selection;
     }
-private:
+protected:
     std::vector<Option> entry;
     std::function<void()> backward;
     int selection;
@@ -202,6 +199,68 @@ private:
     Vector2 offsetPercentInitial, offsetPercentAdditional;
     Color colorActive, colorInactive;
     Font* font;
+};
+
+struct Parameters {
+    int value;
+    enum values {key, speed};
+    values valueType;
+};
+
+class OptionsMenu : public Menu {
+public:
+    OptionsMenu(std::vector<Option> entry, std::function<void()> backward, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 1.0f, Font *font = &menu_font)
+    : Menu(entry, backward, colorActive, colorInactive, size, offset, offsetAdd, spacing, font) {}
+
+    void draw() {
+        Menu::draw();
+        for (int i = 0; i < entry.size(); i++) {
+            Text text(parameters[i].valueType == Parameters::key ? std::to_string(parameters[i].value) : std::to_string((char)parameters[i].value), (i == selection && selected ? colorActive : colorInactive), size, {offset + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
+            text.draw();
+        }
+    }
+
+    int getKey() {
+        int stroke = GetKeyPressed();
+        if (stroke != 0) {
+            parameters[selection].value = stroke;
+        }
+        return parameters[selection].value;
+    }
+
+    void increaseDecrease() {
+        int &val = parameters[selection].value;
+
+        if (val>=1 && val<=60) {
+            if (mv_down() && val!=60) val++;
+            else if (mv_up() && val!=1) val--;
+        }
+    }
+
+    void run() {
+        if (!selected) {
+            if (mv_back()) { backward(); PlaySound(backout); }
+            else if (mv_forward()) {selected = true; PlaySound(forward);}
+            else if (mv_down()) { if (entry.size() <= ++selection) selection = 0; PlaySound(scroll);}
+            else if (mv_up()) { if (0 > --selection) selection = entry.size() - 1; PlaySound(scroll);}
+        }
+        else {
+            if (mv_back() || mv_forward()) {selected = false; PlaySound(backout);}
+            else {
+                entry[selection].forward();
+            }
+        }
+
+        this->draw();
+    }
+
+    int getValue(int index) {
+        return parameters[index].value;
+    }
+protected:
+    std::vector<Parameters> parameters = {{KEY_W, Parameters::key},{KEY_A, Parameters::key},{KEY_S, Parameters::key},{KEY_D, Parameters::key}, {3, Parameters::speed}};
+    bool selected;
+    float offset = 0.5f;
 };
 
 #endif //LUNALIB_H

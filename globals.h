@@ -105,6 +105,15 @@ Menu select_level_menu({
     {"Level 3", [] {levelManager.load(2);}}
     },          [] {game_state = MENU_STATE;}, WHITE, GRAY, 50.0f, {0.35f, 0.475f}, {0.1f, 0.0f});
 
+Text options_title("Settings", WHITE, 75.0f, {0.43f, 0.205f}, 4.0f);
+OptionsMenu options_menu({
+{"Move Up", [] {options_menu.getKey();}},
+{"Move Left", [] {options_menu.getKey();}},
+{"Move Down", [] {options_menu.getKey();}},
+{"Move Right", [] {options_menu.getKey();}},
+{"Player Speed", [] {options_menu.increaseDecrease();}}
+}, [] {game_state = MENU_STATE;}, WHITE, GRAY, 40.0f, {0.4f, 0.4f}, {0.0f, 0.05f});
+
 Menu pause({
     {"Continue",  [] {game_state = GAME_STATE;}},
     {"Restart",   [] {levelManager.unload(); levelManager.load();}},
@@ -116,8 +125,6 @@ Text victory_subtitle("Press Enter to go back to menu", WHITE, 30.0f, {0.5f, 0.6
 
 /* Images and Sprites */
 
-Texture2D wall_image1;
-Texture2D wall_image2;
 Texture2D floor_image;
 Texture2D goal_image;
 Texture2D box_image;
@@ -145,8 +152,9 @@ struct sprite {
 
 /* Sounds */
 
-Sound goal_sound;
-Sound exit_sound;
+Sound scroll;
+Sound forward;
+Sound backout;
 
 /* Victory Menu Background */
 

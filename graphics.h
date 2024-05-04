@@ -18,7 +18,7 @@ void Text::draw() {
     dimensions = MeasureTextEx(*font, text.c_str(), size, spacing);
 
     Vector2 pos = {
-            (screen_width *offsetPercent.x)-(0.5f*dimensions.x),
+            (screen_width *offsetPercent.x)-(0.5f*dimensions.x) + 0.75f*((cosf(rand()%10*game_frame)+sinf(rand()%4*game_frame))),
             (screen_height*offsetPercent.y)-(0.5f*dimensions.y)
     };
     DrawTextEx(*font, text.c_str(), pos, dimensions.y, spacing, color);

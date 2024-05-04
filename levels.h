@@ -88,7 +88,6 @@ void Level::if_solved() {
     if (level_solved) {
         levelManager.unload();
         levelManager.load(1);
-        play_sound(exit_sound);
     }
 }
 
