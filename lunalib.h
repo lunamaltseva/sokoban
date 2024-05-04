@@ -215,7 +215,7 @@ public:
     void draw() {
         Menu::draw();
         for (int i = 0; i < entry.size(); i++) {
-            Text text(parameters[i].valueType == Parameters::key ? std::to_string(parameters[i].value) : std::to_string((char)parameters[i].value), (i == selection && selected ? colorActive : colorInactive), size, {offset + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
+            Text text(parameters[i].valueType == Parameters::speed ? std::to_string(parameters[i].value) : std::string(1, static_cast<char>(parameters[i].value)), (i == selection && selected ? colorActive : colorInactive), size, {offset + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
             text.draw();
         }
     }
@@ -258,7 +258,7 @@ public:
         return parameters[index].value;
     }
 protected:
-    std::vector<Parameters> parameters = {{KEY_W, Parameters::key},{KEY_A, Parameters::key},{KEY_S, Parameters::key},{KEY_D, Parameters::key}, {3, Parameters::speed}};
+    std::vector<Parameters> parameters = {{KEY_W, Parameters::key},{KEY_A, Parameters::key},{KEY_S, Parameters::key}, {KEY_D, Parameters::key}, {KEY_U, Parameters::key}, {3, Parameters::speed}};
     bool selected;
     float offset = 0.5f;
 };

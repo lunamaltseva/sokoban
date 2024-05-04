@@ -111,7 +111,8 @@ OptionsMenu options_menu({
 {"Move Left", [] {options_menu.getKey();}},
 {"Move Down", [] {options_menu.getKey();}},
 {"Move Right", [] {options_menu.getKey();}},
-{"Player Speed", [] {options_menu.increaseDecrease();}}
+{"Undo Move", [] {options_menu.getKey();}},
+{"Tiles per Second", [] {options_menu.increaseDecrease();}}
 }, [] {game_state = MENU_STATE;}, WHITE, GRAY, 40.0f, {0.4f, 0.4f}, {0.0f, 0.05f});
 
 Menu pause({

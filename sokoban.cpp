@@ -20,7 +20,7 @@ void update_game() {
 
             bool isAnyDown; isAnyDown = IsKeyDown(KEY_W) || IsKeyDown(KEY_A) || IsKeyDown(KEY_S) || IsKeyDown(KEY_D) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_U);
 
-            int speed; speed = 60 / options_menu.getValue(4);
+            int speed; speed = 60 / options_menu.getValue(5);
 
             if (!isAnyDown) runtime = speed;
             else if (++runtime < speed) break;
@@ -37,7 +37,7 @@ void update_game() {
             } else if (is_key(options_menu.getValue(3))) {
                 player.move(1, 0);
                 return;
-            } else if (is_key(KEY_U)) {
+            } else if (is_key(options_menu.getValue(4))) {
                 player.undo_move();
             } if (mv_back()) {
                 game_state = RELOAD_REQ_STATE;
