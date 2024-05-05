@@ -101,6 +101,17 @@ Texture2D wall_image() {
     return result;
 }
 
+Texture2D floorImage() {
+    Texture2D result;
+    int access = rand()%4+1;
+    switch(access) {
+    case 1: case 2: result = floor1; break;
+        case 3: result = floor2; break;
+        case 4: result = floor3; break;
+    }
+    return result;
+}
+
 void draw_loaded_level() {
     ClearBackground(BLACK);
     Level *level = LevelManager::getInstance();
@@ -118,13 +129,17 @@ void draw_loaded_level() {
                     break;
                 case Level::GOAL:
                     if (!(player.get_row() == row && player.get_column() == column))
-                    draw_image(goal_image, x, y, cell_size);
+                        draw_image(goal_image, x, y, cell_size);
                     break;
                 case Level::BOX:
+                    draw_image(floorImage(), x, y, cell_size);
                     draw_image(box_image, x, y, cell_size);
                     break;
                 case Level::BOX_ON_GOAL:
                     draw_image(box_on_goal_image, x, y, cell_size);
+                    break;
+                case Level::FLOOR:
+                    draw_image(floorImage(), x, y, cell_size);
                     break;
                 default:
                     break;

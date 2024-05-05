@@ -17,7 +17,11 @@ void unload_fonts() {
 }
 
 void load_images() {
-    floor_image       = LoadTexture("data/images/floor.png");
+    player_regular = LoadTexture("data/images/player.png");
+    player_invert = LoadTexture("data/images/player_inv.png");
+    floor1       = LoadTexture("data/images/floor/floor.png");
+    floor2       = LoadTexture("data/images/floor/grass.png");
+    floor3       = LoadTexture("data/images/floor/tiles.png");
     goal_image        = LoadTexture("data/images/goal.png");
     box_image         = LoadTexture("data/images/box.png");
     box_on_goal_image = LoadTexture("data/images/box-on-goal.png");
@@ -31,11 +35,10 @@ void load_images() {
     wilderness2       = LoadTexture("data/images/wall/wilderness2.png");
     wilderness3       = LoadTexture("data/images/wall/wilderness3.png");
 
-    player.setImage(LoadTexture("data/images/player.png"));
+    player.setImage(player_regular);
 }
 
 void unload_images() {
-    UnloadTexture(floor_image);
     UnloadTexture(goal_image);
     UnloadTexture(box_image);
     UnloadTexture(box_on_goal_image);

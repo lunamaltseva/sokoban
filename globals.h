@@ -126,7 +126,8 @@ Text victory_subtitle("Press Enter to go back to menu", WHITE, 30.0f, {0.5f, 0.6
 
 /* Images and Sprites */
 
-Texture2D floor_image;
+Texture2D player_regular;
+Texture2D player_invert;
 Texture2D goal_image;
 Texture2D box_image;
 Texture2D box_on_goal_image;
@@ -140,6 +141,9 @@ Texture2D city3;
 Texture2D wilderness1;
 Texture2D wilderness2;
 Texture2D wilderness3;
+Texture2D floor1;
+Texture2D floor2;
+Texture2D floor3;
 
 struct sprite {
     size_t frame_count    = 0;
