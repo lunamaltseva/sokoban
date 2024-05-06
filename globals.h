@@ -60,6 +60,7 @@ LevelManager levelManager(levels);
 
 /* Player Data */
 
+size_t totalMoves;
 Player player;
 
 /* Graphics Metrics */
@@ -128,6 +129,7 @@ Text victory_subtitle("Press Enter to go back to menu", WHITE, 30.0f, {0.5f, 0.6
 
 Texture2D player_regular;
 Texture2D player_invert;
+
 Texture2D goal_image;
 Texture2D box_image;
 Texture2D box_on_goal_image;
@@ -144,6 +146,10 @@ Texture2D wilderness3;
 Texture2D floor1;
 Texture2D floor2;
 Texture2D floor3;
+
+Texture2D candle_off;
+Texture2D candle_on;
+Texture2D blood;
 
 struct sprite {
     size_t frame_count    = 0;

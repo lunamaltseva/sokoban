@@ -68,8 +68,8 @@ void draw_game() {
             draw_Menu();
             break;
         case GAME_STATE:
-            draw_GUI();
             draw_loaded_level();
+            draw_GUI();
             player.draw();
             break;
         case SELECT_LEVEL_STATE:

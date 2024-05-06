@@ -30,13 +30,15 @@ void draw_GUI() {
     int boxes_on_goals = level->count(Level::BOX_ON_GOAL);
     boxes+=boxes_on_goals;
 
-    std::string progress_counter = std::to_string(boxes_on_goals) + "/" + std::to_string(boxes);
-    std::string movements = std::to_string(player.getSteps());
-    Text progress(progress_counter, WHITE, 80.0f, {0.9f, 0.9f});
-    Text steps(movements, WHITE, 80.0f, {0.07f, 0.1f});
-    progress.draw();
-    steps.draw();
-    draw_image(box_image, screen_width*0.94f, screen_height*0.865f, 80.0f);
+    for (int i = 0; i < boxes; i++) {
+        Vector2 position = {screen_width*0.5f+((float)(rand()%(int)(0.5f*screen_width))-0.25f*screen_width), screen_height-cell_size};
+        draw_image((i < boxes_on_goals ? candle_on : candle_off), position.x, position.y, cell_size);
+    }
+
+    for (int i = 0; i < (totalMoves/100); i++) {
+        Vector2 position = {(float)(rand()%(int)(screen_width-cell_size)), screen_height-cell_size};
+        draw_image(blood, position.x, position.y, cell_size);
+    }
 }
 
 void draw_Menu() {
@@ -67,7 +69,7 @@ void derive_graphics_metrics_from_loaded_level() {
     float level_width  = static_cast<float>(level->width()) * cell_size;
     float level_height = static_cast<float>(level->height())    * cell_size;
     shift_to_center_cell_by_x = (screen_width - level_width)   * 0.5f;
-    shift_to_center_cell_by_y = (screen_height - level_height) * 0.5f;
+    shift_to_center_cell_by_y = (screen_height - level_height) * 0.3f;
 }
 
 Texture2D wall_image() {

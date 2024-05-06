@@ -65,6 +65,8 @@ void Player::move(size_t dx, size_t dy) {
     if (dx==1) player.setImage(player_regular);
     else if (dx==-1) player.setImage(player_invert);
     runtime = 0;
+
+    totalMoves++;
 }
 
 void Player::undo_move() {
@@ -102,6 +104,8 @@ void Player::undo_move() {
     if (d_pos.x == 1) player.setImage(player_regular);
     else if (d_pos.x == -1) player.setImage(player_invert);
     runtime = 0;
+
+    totalMoves--;
 }
 
 #endif // PLAYER_H

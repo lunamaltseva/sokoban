@@ -35,6 +35,10 @@ void load_images() {
     wilderness2       = LoadTexture("data/images/wall/wilderness2.png");
     wilderness3       = LoadTexture("data/images/wall/wilderness3.png");
 
+    candle_off        = LoadTexture("data/images/candle_off.png");
+    candle_on         = LoadTexture("data/images/candle_on.png");
+    blood         = LoadTexture("data/images/blood.png");
+
     player.setImage(player_regular);
 }
 

@@ -110,6 +110,8 @@ private:
     char *data;
 };
 
+extern size_t totalMoves;
+
 class LevelManager {
 public:
     explicit LevelManager(std::vector<Level> &list) { levels = list; }
@@ -123,7 +125,7 @@ public:
 
     void load(size_t offset = 0);
     void unload();
-    void reset() { index = 0; unload();};
+    void reset() { index = 0; unload(); totalMoves = 0; }
     static size_t get_index() { return index; }
     friend void draw_loaded_level();
 private:
@@ -152,6 +154,7 @@ public:
     ~Player() {
         UnloadTexture(image);
     }
+
 private:
     size_t row, column;
     Texture2D image;
