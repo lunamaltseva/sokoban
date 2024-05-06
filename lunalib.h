@@ -7,6 +7,7 @@
 #include <vector>
 #include <functional>
 #include <sstream>
+#include <fstream>
 
 size_t game_frame = 0;
 size_t runtime = 0;
@@ -112,15 +113,14 @@ private:
 };
 
 class LevelDecoder {
-    Level instantiate(std::string &line) {
+public:
+    static Level instantiate(std::string &line) {
         expand(line);
         std::vector<std::string> lines;
         fillOut(lines, line);
 
         size_t columns = lines[0].length();
-        for (auto &el : lines)
-            if (el.length() != columns)
-                throw (std::runtime_error("IDIOT!"));
+        for (auto &el : lines) if (el.length() != columns) throw (std::runtime_error("IDIOT!"));
 
         size_t rows = lines.size();
 
@@ -132,7 +132,7 @@ class LevelDecoder {
         return {rows, columns, data};
     }
 
-    void expand(std::string &str) {
+    static void expand(std::string &str) {
         std::string result;
         for (int i = 0; i < str.length(); i++) {
             if (!isdigit(str[i])) result += str[i];
@@ -156,7 +156,7 @@ class LevelDecoder {
         str = result;
     }
 
-    std::vector<std::string> fillOut(std::vector<std::string>& vector, const std::string &str) {
+    static std::vector<std::string> fillOut(std::vector<std::string>& vector, const std::string &str) {
         std::stringstream stream(str);
         while (!stream.eof()) {
             std::string token;
@@ -171,7 +171,16 @@ extern size_t totalMoves;
 
 class LevelManager {
 public:
-    explicit LevelManager(std::vector<Level> &list) { levels = list; }
+    LevelManager() {
+        std::ifstream input("data/levels.sl");
+        while (!input.eof()) {
+            std::string line;
+            std::getline(input, line);
+            if (line[0] == ';') continue;
+            Level loaded_level = LevelDecoder::instantiate(line);
+            add(loaded_level);
+        }
+    }
     static void add(Level &level) {levels.push_back(level);}
 
     static Level* getInstance() {
