@@ -8,6 +8,7 @@
 #include <functional>
 #include <sstream>
 #include <fstream>
+#include <iostream>
 
 size_t game_frame = 0;
 size_t runtime = 0;
@@ -96,7 +97,14 @@ public:
 
     Level() {}
     Level(size_t height, size_t width, char *data)
-            : rows(height), columns(width), data{data} {}
+            : rows(height), columns(width), data(data) {
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < columns; j++) {
+                std::cout << "'" << data[i*j] << "', ";
+            }
+            std::cout << std::endl;
+        }
+    }
 
     bool is_cell_inside(int row, int column);
     char& get_cell(size_t row, size_t column);
@@ -124,11 +132,16 @@ public:
 
         size_t rows = lines.size();
 
-        char* data = new char[rows*columns];
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < columns; j++)
-                data[i*j] = lines[i].at(j);
-
+        char* data;
+        data = new char[rows*columns];
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < columns; j++) {
+                data[i * j] = lines[i].at(j);
+                //std::cout << "'" << data[i*j] << "', ";
+            }
+            //std::cout << std::endl;
+        }
+        //std::cout << rows << " " << columns << std::endl;
         return {rows, columns, data};
     }
 
@@ -153,6 +166,9 @@ public:
                 }
             }
         }
+
+
+
         str = result;
     }
 
@@ -163,6 +179,14 @@ public:
             std::getline(stream, token, '|');
             vector.push_back(token);
         }
+        size_t max_length = 0;
+        for (auto &el : vector)
+            if (max_length<el.length())
+                max_length=el.length();
+        for (auto &el : vector)
+            while (el.length()!=max_length)
+                el.append(" ");
+
         return vector;
     }
 };
