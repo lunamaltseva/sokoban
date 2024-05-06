@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <vector>
 #include <functional>
+#include <sstream>
 
 size_t game_frame = 0;
 size_t runtime = 0;
@@ -108,6 +109,62 @@ public:
 private:
     size_t rows, columns;
     char *data;
+};
+
+class LevelDecoder {
+    Level instantiate(std::string &line) {
+        expand(line);
+        std::vector<std::string> lines;
+        fillOut(lines, line);
+
+        size_t columns = lines[0].length();
+        for (auto &el : lines)
+            if (el.length() != columns)
+                throw (std::runtime_error("IDIOT!"));
+
+        size_t rows = lines.size();
+
+        char* data = new char[rows*columns];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < columns; j++)
+                data[i*j] = lines[i].at(j);
+
+        return {rows, columns, data};
+    }
+
+    void expand(std::string &str) {
+        std::string result;
+        for (int i = 0; i < str.length(); i++) {
+            if (!isdigit(str[i])) result += str[i];
+
+            else {
+                std::string temp;
+                int index = 0;
+                while (isdigit(str[i + index])) {
+                    temp += str[i];
+                    index++;
+                }
+
+                char c = str[i += index];
+                int value = stoi(temp);
+                while (value>0) {
+                    result+=c;
+                    value--;
+                }
+            }
+        }
+        str = result;
+    }
+
+    std::vector<std::string> fillOut(std::vector<std::string>& vector, const std::string &str) {
+        std::stringstream stream(str);
+        while (!stream.eof()) {
+            std::string token;
+            std::getline(stream, token, '|');
+            vector.push_back(token);
+        }
+        return vector;
+    }
 };
 
 extern size_t totalMoves;

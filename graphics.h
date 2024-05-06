@@ -42,7 +42,7 @@ void draw_GUI() {
 }
 
 void draw_Menu() {
-    Text title("Catastrophic", WHITE, 80.0f, {0.2f, 0.2f}, 4.0f);
+    Text title("Catastrophic", RED, 80.0f, {0.2f, 0.2f}, 4.0f);
     Text byline("By @lunamaltseva", GRAY, 30.0f, {0.2f, 0.85f}, 2.0f);
     title.draw();
     byline.draw();

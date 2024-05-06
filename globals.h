@@ -98,8 +98,6 @@ Menu main_menu({
     {"Exit",         [] {CloseWindow();}}
     },               [] {CloseWindow();}, WHITE, GRAY, 50.0f, {0.2f, 0.4f}, {0.0f, 0.075f});
 
-Text menu_title("Catastrophic", WHITE, 75.0f, {0.2f, 0.25f});
-
 Menu select_level_menu({
     {"Level 1", [] {levelManager.load();}},
     {"Level 2", [] {levelManager.load(1);}},
