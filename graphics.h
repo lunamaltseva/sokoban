@@ -24,6 +24,32 @@ void Text::draw() {
     DrawTextEx(*font, text.c_str(), pos, dimensions.y, spacing, color);
 }
 
+void MultilineText::draw() {
+    for (int i = 0; i < lines.size(); i++) {
+        Text(lines[i], color, size, {offsetPercent.x+dOffset.x*i, offsetPercent.y+dOffset.y*i}, spacing, font).draw();
+    }
+}
+
+void Prompt::draw() {
+    Vector2 size = {0,0};
+    size.y = title.size +(contents.dOffset.y*screen_height*static_cast<float>(contents.lines.size()));
+    for (auto &el : contents.lines) {
+        if (MeasureTextEx(*contents.font, el.c_str(), contents.size, contents.spacing).x > size.x)
+            size.x = MeasureTextEx(*contents.font, el.c_str(), contents.size, contents.spacing).x;
+    }
+    Vector2 sizePercent = {((screen_width-size.x)*0.5f)/screen_width, ((screen_height-size.y)*0.5f)/screen_height};
+    title.position({0.5f, sizePercent.y});
+    contents.position({0.5f, sizePercent.y+((title.size+30.0f)/screen_height)});
+    OK.position({0.5f, ((size.y+screen_height)*0.52f)/screen_height});
+
+    DrawRectangle((screen_width-size.x)*0.5f-80.0f, (screen_height-size.y)*0.5f-80.0f, size.x+160.0f, size.y+160.0f, BLACK);
+    DrawRectangleLinesEx({(screen_width-size.x)*0.5f-80.0f, (screen_height-size.y)*0.5f-80.0f, size.x+160.0f, size.y+160.0f}, 5.0f, WHITE);
+
+    title.draw();
+    contents.draw();
+    OK.draw();
+}
+
 void draw_GUI() {
     Level *level = LevelManager::getInstance();
     int boxes = level->count(Level::BOX);

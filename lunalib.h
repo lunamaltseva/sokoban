@@ -39,13 +39,49 @@ class Text {
 public:
     Text(const std::string text, Color color = WHITE, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, float spacing = 1.0f, Font *font = &menu_font)
             : text(text), color(color), size(size), font(font), spacing(spacing), offsetPercent(offset) {}
-    void draw();
-private:
+    virtual void draw();
+    void position(Vector2 position) {
+        offsetPercent = position;
+    }
+    friend class Prompt;
+protected:
     std::string text;
     float size, spacing;
     Vector2 offsetPercent, dimensions;
     Color color;
     Font* font;
+};
+
+class MultilineText : public Text {
+public:
+    MultilineText(const std::string text, Vector2 dOffset = {0.0f, 0.075f}, Color color = WHITE, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, float spacing = 1.0f, Font *font = &menu_font)
+        : Text("", color, size, offset, spacing, font), dOffset(dOffset) {
+        std::stringstream stream(text);
+        while (!stream.eof()) {
+            std::string token;
+            std::getline(stream, token, '\n');
+            lines.push_back(token);
+        }
+    }
+    void draw() override;
+    friend class Prompt;
+protected:
+    Vector2 dOffset;
+    std::vector<std::string> lines;
+};
+
+class Prompt {
+public:
+    Prompt(std::string title, std::string contents)
+        : title(Text(title, WHITE, 70.0f)), contents(MultilineText(contents)) { }
+    void draw();
+    void run() {
+        draw();
+    }
+private:
+    Text title;
+    MultilineText contents;
+    Text OK = Text("continue", GRAY, 40.0f);
 };
 
 void draw_image(Texture2D image, float x, float y, float size);
@@ -97,14 +133,7 @@ public:
 
     Level() {}
     Level(size_t height, size_t width, char *data)
-            : rows(height), columns(width), data(data) {
-        for (int i = 0; i < rows; i++){
-            for (int j = 0; j < columns; j++) {
-                std::cout << "'" << data[i*j] << "', ";
-            }
-            std::cout << std::endl;
-        }
-    }
+            : rows(height), columns(width), data(data) { }
 
     bool is_cell_inside(int row, int column);
     char& get_cell(size_t row, size_t column);
@@ -136,38 +165,30 @@ public:
         data = new char[rows*columns];
         for (int i = 0; i < rows; i++){
             for (int j = 0; j < columns; j++) {
-                data[i * j] = lines[i].at(j);
-                //std::cout << "'" << data[i*j] << "', ";
+                data[i * columns + j] = lines[i].at(j);
             }
-            //std::cout << std::endl;
         }
-        //std::cout << rows << " " << columns << std::endl;
         return {rows, columns, data};
     }
 
     static void expand(std::string &str) {
         std::string result;
         for (int i = 0; i < str.length(); i++) {
-            if (!isdigit(str[i])) result += str[i];
+            if (!isdigit(str[i]))
+                result += str[i];
 
             else {
                 std::string temp;
                 int index = 0;
-                while (isdigit(str[i + index])) {
-                    temp += str[i];
-                    index++;
-                }
+                while (isdigit(str[i + index]))
+                    temp += str[i + index++];
 
                 char c = str[i += index];
                 int value = stoi(temp);
-                while (value>0) {
+                while (value--> 0)
                     result+=c;
-                    value--;
-                }
             }
         }
-
-
 
         str = result;
     }
@@ -179,6 +200,7 @@ public:
             std::getline(stream, token, '|');
             vector.push_back(token);
         }
+
         size_t max_length = 0;
         for (auto &el : vector)
             if (max_length<el.length())
