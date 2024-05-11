@@ -4,7 +4,7 @@
 #include "raylib.h"
 
 #include "globals.h"
-#include "images.h"
+#include "assets.h"
 #include "levels.h"
 #include "player.h"
 #include "utilities.h"
@@ -78,6 +78,21 @@ void draw_Menu() {
     draw_image(player.getImage(), screen_width-(scale*3.0f), screen_height-(scale*1.5f), scale);
 }
 
+void Menu::draw() {
+    for (int i = 0; i < entry.size(); i++) {
+        Text text(entry[i].text, (i == selection ? colorActive : colorInactive), size, {offsetPercentInitial.x + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
+        text.draw();
+    }
+}
+
+void OptionsMenu::draw() {
+    Menu::draw();
+    for (int i = 0; i < entry.size(); i++) {
+        Text text(parameters[i].valueType == Parameters::speed ? std::to_string(parameters[i].value) : std::string(1, static_cast<char>(parameters[i].value)), (i == selection && selected ? colorActive : colorInactive), size, {offset + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
+        text.draw();
+    }
+}
+
 void derive_graphics_metrics_from_loaded_level() {
     Level *level = LevelManager::getInstance();
 
@@ -140,7 +155,7 @@ Texture2D floorImage() {
     return result;
 }
 
-void draw_loaded_level() {
+void LevelManager::draw() {
     ClearBackground(BLACK);
     Level *level = LevelManager::getInstance();
     srand(1);

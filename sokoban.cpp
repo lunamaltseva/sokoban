@@ -2,44 +2,54 @@
 #include "globals.h"
 #include "levels.h"
 #include "player.h"
-#include "graphics.h"
-#include "images.h"
-#include "sounds.h"
+#include "draw.h"
+#include "assets.h"
 #include "lunalib.h"
+#include "run.h"
 
 void update_game() {
     switch (game_state) {
-        case MENU_STATE:
+        case MENU_STATE: case OPTION_STATE: case SELECT_LEVEL_STATE:
+            play(mainTheme);
             break;
+
         case GAME_STATE:
+            playLevelMusic();
+
             int key_pressed;
             key_pressed = GetKeyPressed();
 
-            if (key_pressed != 0)
-                key_recently_pressed = key_pressed;
+            if (key_pressed != 0) key_recently_pressed = key_pressed;
 
             bool isAnyDown; isAnyDown = IsKeyDown(KEY_W) || IsKeyDown(KEY_A) || IsKeyDown(KEY_S) || IsKeyDown(KEY_D) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_U);
 
             int speed; speed = 60 / options_menu.getValue(5);
 
             if (!isAnyDown) runtime = speed;
-            else if (++runtime < speed) break;
+            else if (++runtime < speed)
+                break;
 
             if (is_key(options_menu.getValue(0))) {
                 player.move(0, -1);
                 return;
-            } else if (is_key(options_menu.getValue(2))) {
+            }
+            else if (is_key(options_menu.getValue(2))) {
                 player.move(0, 1);
                 return;
-            } else if (is_key(options_menu.getValue(1))) {
+            }
+            else if (is_key(options_menu.getValue(1))) {
                 player.move(-1, 0);
                 return;
-            } else if (is_key(options_menu.getValue(3))) {
+            }
+            else if (is_key(options_menu.getValue(3))) {
                 player.move(1, 0);
                 return;
-            } else if (is_key(options_menu.getValue(4))) {
+            }
+            else if (is_key(options_menu.getValue(4))) {
                 player.undo_move();
-            } if (mv_back()) {
+            }
+            if (mv_back()) {
+                PlaySound(backout);
                 game_state = RELOAD_REQ_STATE;
                 game_frame = 0;
             }
@@ -50,6 +60,7 @@ void update_game() {
                 levelManager.load(0);
                 game_state = GAME_STATE;
             }
+            playLevelMusic();
             break;
         case VICTORY_STATE:
             if (IsKeyPressed(KEY_ENTER)) {
@@ -68,7 +79,7 @@ void draw_game() {
             draw_Menu();
             break;
         case GAME_STATE:
-            draw_loaded_level();
+            LevelManager::draw();
             draw_GUI();
             player.draw();
             break;

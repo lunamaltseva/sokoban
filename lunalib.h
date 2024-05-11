@@ -151,82 +151,16 @@ private:
 
 class LevelDecoder {
 public:
-    static Level instantiate(std::string &line) {
-        expand(line);
-        std::vector<std::string> lines;
-        fillOut(lines, line);
-
-        size_t columns = lines[0].length();
-        for (auto &el : lines) if (el.length() != columns) throw (std::runtime_error("IDIOT!"));
-
-        size_t rows = lines.size();
-
-        char* data;
-        data = new char[rows*columns];
-        for (int i = 0; i < rows; i++){
-            for (int j = 0; j < columns; j++) {
-                data[i * columns + j] = lines[i].at(j);
-            }
-        }
-        return {rows, columns, data};
-    }
-
-    static void expand(std::string &str) {
-        std::string result;
-        for (int i = 0; i < str.length(); i++) {
-            if (!isdigit(str[i]))
-                result += str[i];
-
-            else {
-                std::string temp;
-                int index = 0;
-                while (isdigit(str[i + index]))
-                    temp += str[i + index++];
-
-                char c = str[i += index];
-                int value = stoi(temp);
-                while (value--> 0)
-                    result+=c;
-            }
-        }
-
-        str = result;
-    }
-
-    static std::vector<std::string> fillOut(std::vector<std::string>& vector, const std::string &str) {
-        std::stringstream stream(str);
-        while (!stream.eof()) {
-            std::string token;
-            std::getline(stream, token, '|');
-            vector.push_back(token);
-        }
-
-        size_t max_length = 0;
-        for (auto &el : vector)
-            if (max_length<el.length())
-                max_length=el.length();
-        for (auto &el : vector)
-            while (el.length()!=max_length)
-                el.append(" ");
-
-        return vector;
-    }
+    static Level instantiate(std::string &line);
+    static void expand(std::string &str);
+    static std::vector<std::string> fillOut(std::vector<std::string> &vector, const std::string &str);
 };
 
 extern size_t totalMoves;
 
 class LevelManager {
 public:
-    LevelManager() {
-        std::ifstream input("data/levels.sl");
-        while (!input.eof()) {
-            std::string line;
-            std::getline(input, line);
-            if (line[0] == ';') continue;
-            Level loaded_level = LevelDecoder::instantiate(line);
-            add(loaded_level);
-        }
-    }
+    LevelManager();
     static void add(Level &level) {levels.push_back(level);}
 
     static Level* getInstance() {
@@ -239,7 +173,7 @@ public:
     void unload();
     void reset() { index = 0; unload(); totalMoves = 0; }
     static size_t get_index() { return index; }
-    friend void draw_loaded_level();
+    static void draw();
 private:
     static Level* instance;
     static size_t index;
@@ -287,25 +221,9 @@ class Menu {
 public:
     Menu(std::vector<Option> entry, std::function<void()> backward, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 1.0f, Font *font = &menu_font)
             : entry(entry), backward(backward), colorActive(colorActive), colorInactive(colorInactive), size(size), font(font), spacing(spacing), offsetPercentInitial(offset), offsetPercentAdditional(offsetAdd), selection(0) {}
-
-    void draw() {
-        for (int i = 0; i < entry.size(); i++) {
-            Text text(entry[i].text, (i == selection ? colorActive : colorInactive), size, {offsetPercentInitial.x + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
-            text.draw();
-        }
-    }
-
-    void run() {
-        if (mv_down())         {if (entry.size() <= ++selection) selection = 0; PlaySound(scroll);}
-        else if (mv_up())      {if (0 > --selection) selection = entry.size()-1;PlaySound(scroll);}
-        else if (mv_forward()) {entry[selection].forward();PlaySound(forward);}
-        else if (mv_back())    {backward();PlaySound(backout);}
-        this->draw();
-    }
-
-    int selected() {
-        return selection;
-    }
+    void draw();
+    void run();
+    int selected() {return selection;}
 protected:
     std::vector<Option> entry;
     std::function<void()> backward;
@@ -327,47 +245,10 @@ public:
     OptionsMenu(std::vector<Option> entry, std::function<void()> backward, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 1.0f, Font *font = &menu_font)
     : Menu(entry, backward, colorActive, colorInactive, size, offset, offsetAdd, spacing, font) {}
 
-    void draw() {
-        Menu::draw();
-        for (int i = 0; i < entry.size(); i++) {
-            Text text(parameters[i].valueType == Parameters::speed ? std::to_string(parameters[i].value) : std::string(1, static_cast<char>(parameters[i].value)), (i == selection && selected ? colorActive : colorInactive), size, {offset + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
-            text.draw();
-        }
-    }
-
-    int getKey() {
-        int stroke = GetKeyPressed();
-        if (stroke != 0) {
-            parameters[selection].value = stroke;
-        }
-        return parameters[selection].value;
-    }
-
-    void increaseDecrease() {
-        int &val = parameters[selection].value;
-
-        if (val>=1 && val<=60) {
-            if (mv_down() && val!=60) val++;
-            else if (mv_up() && val!=1) val--;
-        }
-    }
-
-    void run() {
-        if (!selected) {
-            if (mv_back()) { backward(); PlaySound(backout); }
-            else if (mv_forward()) {selected = true; PlaySound(forward);}
-            else if (mv_down()) { if (entry.size() <= ++selection) selection = 0; PlaySound(scroll);}
-            else if (mv_up()) { if (0 > --selection) selection = entry.size() - 1; PlaySound(scroll);}
-        }
-        else {
-            if (mv_back() || mv_forward()) {selected = false; PlaySound(backout);}
-            else {
-                entry[selection].forward();
-            }
-        }
-
-        this->draw();
-    }
+    void draw();
+    int getKey();
+    void increaseDecrease();
+    void run();
 
     int getValue(int index) {
         return parameters[index].value;

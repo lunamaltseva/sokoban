@@ -3,7 +3,7 @@
 
 #include "globals.h"
 #include "player.h"
-#include "graphics.h"
+#include "draw.h"
 
 #include <cstddef>
 
@@ -88,6 +88,7 @@ void Level::if_solved() {
     if (level_solved) {
         levelManager.unload();
         levelManager.load(1);
+        PlaySound(levelComplete);
     }
 }
 

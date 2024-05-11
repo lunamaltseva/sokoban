@@ -3,7 +3,7 @@
 
 #include "globals.h"
 #include "levels.h"
-#include "sounds.h"
+#include "assets.h"
 
 #include <cstddef>
 
@@ -35,7 +35,7 @@ void Player::move(size_t dx, size_t dy) {
         if (!(target_cell == Level::FLOOR || target_cell == Level::GOAL))
             return;
 
-    if (next_cell == Level::BOX || next_cell == Level::BOX_ON_GOAL &&
+    if (next_cell == Level::BOX     || next_cell == Level::BOX_ON_GOAL &&
         target_cell == Level::FLOOR || target_cell == Level::GOAL) was_box_moved.push_back(true);
     else was_box_moved.push_back(false);
 
@@ -47,12 +47,20 @@ void Player::move(size_t dx, size_t dy) {
     else if (next_cell == Level::BOX || next_cell == Level::BOX_ON_GOAL) {
         if (!level->is_cell_inside(target.x, target.y)) return;
 
+        if (next_cell == Level::BOX && target_cell == Level::GOAL) {
+            int selectedSound = was_box_moved.size()%3;
+            switch (selectedSound) {
+                case 0: PlaySound(burial1); break;
+                case 1: PlaySound(burial2); break;
+                case 2: PlaySound(burial3); break;
+            }
+            PlaySound(match);
+        }
+
         if (target_cell == Level::FLOOR || target_cell == Level::GOAL) {
             next_cell = next_cell == Level::BOX ? Level::FLOOR : Level::GOAL;
             if (target_cell == Level::FLOOR) target_cell = Level::BOX;
-            else {
-                target_cell = Level::BOX_ON_GOAL;
-            }
+            else                             target_cell = Level::BOX_ON_GOAL;
 
             row    = static_cast<size_t>(next.x);
             column = static_cast<size_t>(next.y);
@@ -66,7 +74,7 @@ void Player::move(size_t dx, size_t dy) {
     else if (dx==-1) player.setImage(player_invert);
     runtime = 0;
 
-    totalMoves++;
+    if (++totalMoves%100==0) PlaySound(hurt);
 }
 
 void Player::undo_move() {
@@ -105,6 +113,7 @@ void Player::undo_move() {
     else if (d_pos.x == -1) player.setImage(player_invert);
     runtime = 0;
 
+    PlaySound(undo);
     totalMoves--;
 }
 

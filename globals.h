@@ -59,12 +59,12 @@ Menu select_level_menu({
 
 Text options_title("Settings", WHITE, 75.0f, {0.43f, 0.205f}, 4.0f);
 OptionsMenu options_menu({
-{"Move Up", [] {options_menu.getKey();}},
-{"Move Left", [] {options_menu.getKey();}},
-{"Move Down", [] {options_menu.getKey();}},
-{"Move Right", [] {options_menu.getKey();}},
-{"Undo Move", [] {options_menu.getKey();}},
-{"Tiles per Second", [] {options_menu.increaseDecrease();}}
+{"Move Up", []          {/*options_menu.getKey()*/;}},
+{"Move Left", []        {/*options_menu.getKey()*/;}},
+{"Move Down", []        {/*options_menu.getKey()*/;}},
+{"Move Right", []       {/*options_menu.getKey()*/;}},
+{"Undo Move", []        {/*options_menu.getKey()*/;}},
+{"Tiles per Second", [] {/*options_menu.increaseDecrease()*/;}}
 }, [] {game_state = MENU_STATE;}, WHITE, GRAY, 40.0f, {0.4f, 0.4f}, {0.0f, 0.05f});
 
 Menu pause({
@@ -102,6 +102,17 @@ Texture2D candle_off;
 Texture2D candle_on;
 Texture2D blood;
 
+Texture2D intro1;
+Texture2D intro2;
+Texture2D intro3;
+Texture2D intro4;
+Texture2D ending_good1;
+Texture2D ending_good2;
+Texture2D ending_good3;
+Texture2D ending_bad1;
+Texture2D ending_bad2;
+Texture2D ending_bad3;
+
 struct sprite {
     size_t frame_count    = 0;
     size_t frames_to_skip = 3;
@@ -117,6 +128,24 @@ struct sprite {
 Sound scroll;
 Sound forward;
 Sound backout;
+Sound reset;
+Sound undo;
+
+Sound burial1;
+Sound burial2;
+Sound burial3;
+Sound match;
+
+Sound hurt;
+
+Sound levelComplete;
+Sound ending;
+
+Music theme;
+Music mainTheme;
+Music house;
+Music town;
+Music forest;
 
 /* Victory Menu Background */
 
@@ -170,6 +199,7 @@ void draw_sprite(sprite &sprite, float x, float y, float size);
 
 void load_sounds();
 void unload_sounds();
-void play_sound(Sound sound);
+void play(Sound sound);
+void play(Music music);
 
 #endif // GLOBALS_H
