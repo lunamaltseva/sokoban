@@ -84,16 +84,16 @@ private:
     Text OK = Text("continue", GRAY, 40.0f);
 };
 
-void draw_image(Texture2D image, float x, float y, float size);
+void draw_image(Texture2D image, float x, float y, float width, float height);
 
 class Slide {
 public:
     Slide(const std::string &text, const Texture2D picture)
-        : caption{Text(text, WHITE, 30.0f, {0.9f, 0.5f})}, picture{picture} { }
+        : caption{Text(text, WHITE, 70.0f, {0.5f, 0.9f})}, picture{picture} { }
     void draw() {
         caption.draw();
-        float minimum = std::min(GetScreenHeight(), GetScreenWidth())*0.8f;
-        draw_image(picture, (GetScreenWidth()-minimum)*0.5f, (GetScreenHeight()-minimum)*0.5f, minimum);
+        float minimum = std::min(GetScreenHeight(), GetScreenWidth())*0.4f;
+        draw_image(picture, (GetScreenWidth()-(2*minimum))*0.5f, (GetScreenHeight()-minimum)*0.5f, 2*minimum, minimum);
     }
 private:
     Text caption;
