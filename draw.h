@@ -75,7 +75,7 @@ void draw_Menu() {
     int minimum = std::min(screen_width, screen_height);
     float scale = minimum*0.25f;
     draw_image(goal_image, screen_width-(scale*1.75f), screen_height-(scale*1.5f), scale);
-    draw_image(player.getImage(), screen_width-(scale*3.0f), screen_height-(scale*1.5f), scale);
+    draw_image(player_regular, screen_width-(scale*3.0f)+ 0.75f*((cosf(rand()%10*game_frame)+sinf(rand()%4*game_frame))), screen_height-(scale*1.5f), scale);
 }
 
 void Menu::draw() {
@@ -218,6 +218,36 @@ void create_victory_menu_background() {
     ClearBackground(BLACK);
     EndDrawing();
     BeginDrawing();
+}
+
+void Animation::run() {
+    switch (game_state) {
+        case MENU_STATE:
+            main_menu.draw();
+            draw_Menu();
+        case SELECT_LEVEL_STATE:
+            select_level_menu.draw();
+            break;
+        case GAME_STATE:
+            LevelManager::draw();
+            draw_GUI();
+            break;
+    }
+
+    switch (state()) {
+        case fade_in:
+            DrawRectangle(0, 0, screen_width, screen_height, {0,0,0,static_cast<unsigned char>(runtime*(255.0f/60.0f))});
+        case fade_out:
+            DrawRectangle(0, 0, screen_width, screen_height, {0,0,0,static_cast<unsigned char>(runtime*(255.0f/60.0f))});
+    }
+
+    if (runtime > animationDuration) {
+        play_animation(none);
+        switch (game_state) {
+        case MENU_STATE: case SELECT_LEVEL_STATE:
+            game_state = GAME_STATE;
+        }
+    }
 }
 
 void animate_victory_menu_background() {

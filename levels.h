@@ -13,7 +13,7 @@ void LevelManager::load(size_t offset) {
     index+=offset;
     if (index >= levels.size()) {
         index = 0;
-        game_state = VICTORY_STATE;
+        game_state = ENDING_STATE;
         create_victory_menu_background();
     }
 

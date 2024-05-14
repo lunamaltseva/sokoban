@@ -62,7 +62,7 @@ void update_game() {
             }
             playLevelMusic();
             break;
-        case VICTORY_STATE:
+        case ENDING_STATE:
             if (IsKeyPressed(KEY_ENTER)) {
                 game_state = MENU_STATE;
             }
@@ -71,9 +71,11 @@ void update_game() {
 }
 
 void draw_game() {
-    ++game_frame;
-
-    switch (game_state) {
+    game_frame++;
+    if (animation.state() != Animation::none) {
+        Animation::run();
+    }
+    else switch (game_state) {
         case MENU_STATE:
             main_menu.run();
             draw_Menu();
@@ -97,7 +99,7 @@ void draw_game() {
         case RELOAD_REQ_STATE:
             if (game_frame != 1) pause.run();
             break;
-        case VICTORY_STATE:
+        case ENDING_STATE:
             draw_victory_menu();
             break;
     }

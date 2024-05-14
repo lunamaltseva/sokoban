@@ -29,15 +29,51 @@ float cell_size;
 float shift_to_center_cell_by_x;
 float shift_to_center_cell_by_y;
 
+/* Animation */
+
+class Animation {
+public:
+    enum animate {
+        fade_out,
+        fade_in,
+        none
+    };
+
+    Animation(int duration) {
+        animation = none;
+        animationDuration = duration;
+    }
+
+    static void run();
+
+    static animate state() {
+        return animation;
+    }
+
+    static void play_animation(animate state) {
+        runtime = 0;
+        animation = state;
+    };
+private:
+    static animate animation;
+    static int animationDuration;
+};
+
+Animation::animate Animation::animation;
+int Animation::animationDuration;
+
+Animation animation(60);
+
 /* Game State */
 
 enum game_state {
+    INTRO_STATE,
     MENU_STATE,
     SELECT_LEVEL_STATE,
     OPTION_STATE,
     GAME_STATE,
     RELOAD_REQ_STATE,
-    VICTORY_STATE
+    ENDING_STATE
 };
 
 game_state game_state = MENU_STATE;
