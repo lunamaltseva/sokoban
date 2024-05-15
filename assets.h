@@ -37,8 +37,8 @@ void loadImages() {
     wilderness2         = LoadTexture("data/images/wall/wilderness2.png");
     wilderness3         = LoadTexture("data/images/wall/wilderness3.png");
 
-    candleOff          = LoadTexture("data/images/candleOff.png");
-    candleOn           = LoadTexture("data/images/candleOn.png");
+    candleOff          = LoadTexture("data/images/candle_off.png");
+    candleOn           = LoadTexture("data/images/candle_on.png");
     blood               = LoadTexture("data/images/blood.png");
 
     intro1              = LoadTexture("data/images/slides/intro1.png");

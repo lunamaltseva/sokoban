@@ -7,13 +7,17 @@
 #include <cstdlib>
 
 void LevelManager::load(size_t offset) {
-    gameState = GAME_STATE;
 
     index+=offset;
-    if (index >= levels.size()) {
+
+    if (index >= 3) {
         index = 0;
         gameState = ENDING_STATE;
+        Animation::transition(Animation::none);
+        return;
     }
+
+    gameState = GAME_STATE;
 
     Level* level = LevelManager::getInstance();
 

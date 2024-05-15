@@ -109,7 +109,10 @@ public:
     explicit Slideshow(std::vector<Slide> slides, int time) : slides(slides), timePerSlide(time) {}
     void add(const Slide &slide) { slides.push_back(slide); }
     bool draw() {
-        if (itr >= slides.size()) return false;
+        if (itr >= slides.size()) {
+            itr = 0;
+            return false;
+        }
 
         animationFrame++;
 
@@ -195,6 +198,7 @@ public:
     void reset() { index = 0; unload(); }
     void forceComplete();
     static size_t get_index() { return index; }
+    static size_t get_size() { return levels.size(); }
     static void draw();
     static std::vector<levelStatistics> stats;
 private:

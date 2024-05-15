@@ -218,6 +218,7 @@ void Animation::run() {
             break;
         case PAUSED_STATE:
             pauseMenu.draw();
+            pauseMenuTitle.draw();
             break;
         case STATISTIC_STATE:
             level_stats();

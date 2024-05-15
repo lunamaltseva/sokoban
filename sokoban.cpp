@@ -11,8 +11,9 @@ void update_game() {
     switch (gameState) {
         case INTRO_STATE:
             play(theme);
-            if (!intro.draw()) {
+            if (!intro.draw() || IsKeyPressed(KEY_ENTER)) {
                 gameState = MENU_STATE;
+                Animation::transition(Animation::fade_in);
             }
             break;
         case MENU_STATE: case OPTION_STATE: case SELECT_LEVEL_STATE:
@@ -72,8 +73,10 @@ void update_game() {
             playLevelMusic();
             break;
         case ENDING_STATE:
-            if (IsKeyPressed(KEY_ENTER)) {
+            play(theme);
+            if ((LevelManager::stats[0].steps + LevelManager::stats[1].steps + LevelManager::stats[2].steps < 1200 ? !endingGood.draw() : !endingBad.draw())) {
                 gameState = MENU_STATE;
+                Animation::transition(Animation::fade_in);
             }
             break;
     }
@@ -107,6 +110,7 @@ void draw_game() {
             break;
         case PAUSED_STATE:
             if (game_frame != 1) pauseMenu.run();
+            pauseMenuTitle.draw();
             break;
         case STATISTIC_STATE:
             level_stats();
