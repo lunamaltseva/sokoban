@@ -74,7 +74,8 @@ void Player::move(size_t dx, size_t dy) {
     else if (dx==-1) player.setImage(player_invert);
     runtime = 0;
 
-    if (++totalMoves%100==0) PlaySound(hurt);
+    LevelManager::stats[LevelManager::get_index()].steps++;
+    if ((LevelManager::stats[0].steps + LevelManager::stats[1].steps + LevelManager::stats[2].steps)%100==0) PlaySound(hurt);
 }
 
 void Player::undo_move() {
@@ -114,7 +115,7 @@ void Player::undo_move() {
     runtime = 0;
 
     PlaySound(undo);
-    totalMoves--;
+    LevelManager::stats[LevelManager::get_index()].steps--;
 }
 
 #endif // PLAYER_H

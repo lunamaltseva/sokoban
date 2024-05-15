@@ -13,7 +13,6 @@ LevelManager levelManager;
 
 /* Player Data */
 
-size_t totalMoves;
 Player player;
 
 /* Graphics Metrics */
@@ -31,6 +30,7 @@ float shift_to_center_cell_by_y;
 
 /* Animation */
 
+int animation_frame = 0;
 class Animation {
 public:
     enum animate {
@@ -50,8 +50,8 @@ public:
         return animation;
     }
 
-    static void play_animation(animate state) {
-        runtime = 0;
+    static void transition(animate state) {
+        animation_frame = 0;
         animation = state;
     };
 private:
@@ -72,25 +72,29 @@ enum game_state {
     SELECT_LEVEL_STATE,
     OPTION_STATE,
     GAME_STATE,
+    STATISTIC_STATE,
     RELOAD_REQ_STATE,
     ENDING_STATE
 };
 
 game_state game_state = MENU_STATE;
+long start_time;
 
 /* Menu Text Parameters */
 
 Menu main_menu({
-    {"Play",         [] {game_state = GAME_STATE; levelManager.load();}},
+    {"Play",         [] { Animation::transition(Animation::fade_out);}},
     {"Choose Level", [] {game_state = SELECT_LEVEL_STATE;}},
     {"Settings",     [] {game_state = OPTION_STATE;}},
     {"Exit",         [] {CloseWindow();}}
     },               [] {CloseWindow();}, WHITE, GRAY, 50.0f, {0.2f, 0.4f}, {0.0f, 0.075f});
+Text title("Catastrophic", RED, 80.0f, {0.2f, 0.2f}, 4.0f);
+Text byline("By @lunamaltseva", GRAY, 30.0f, {0.2f, 0.85f}, 2.0f);
 
 Menu select_level_menu({
-    {"Level 1", [] {levelManager.load();}},
-    {"Level 2", [] {levelManager.load(1);}},
-    {"Level 3", [] {levelManager.load(2);}}
+    {"Level 1", [] { Animation::transition(Animation::fade_out);}},
+    {"Level 2", [] { Animation::transition(Animation::fade_out);}},
+    {"Level 3", [] { Animation::transition(Animation::fade_out);}}
     },          [] {game_state = MENU_STATE;}, WHITE, GRAY, 50.0f, {0.35f, 0.475f}, {0.1f, 0.0f});
 
 Text options_title("Settings", WHITE, 75.0f, {0.43f, 0.205f}, 4.0f);
@@ -108,6 +112,11 @@ Menu pause({
     {"Restart",   [] {levelManager.unload(); levelManager.load();}},
     {"Main menu", [] {game_state = MENU_STATE; levelManager.reset();}}
 },                [] {game_state = GAME_STATE;});
+
+Menu statistics_menu({
+   {"Continue",  [] { Animation::transition(Animation::fade_out);}},
+   {"Restart",   [] { Animation::transition(Animation::fade_out);}},
+},               [] { ; });
 
 Text victory_title("You Won!", RED, 200.0f);
 Text victory_subtitle("Press Enter to go back to menu", WHITE, 30.0f, {0.5f, 0.6f});

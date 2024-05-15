@@ -16,42 +16,44 @@ void update_game() {
         case GAME_STATE:
             playLevelMusic();
 
-            int key_pressed;
-            key_pressed = GetKeyPressed();
+            if (Animation::state() == Animation::none) {
+                int key_pressed;
+                key_pressed = GetKeyPressed();
 
-            if (key_pressed != 0) key_recently_pressed = key_pressed;
+                if (key_pressed != 0) key_recently_pressed = key_pressed;
 
-            bool isAnyDown; isAnyDown = IsKeyDown(KEY_W) || IsKeyDown(KEY_A) || IsKeyDown(KEY_S) || IsKeyDown(KEY_D) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_U);
+                bool isAnyDown;
+                isAnyDown = IsKeyDown(KEY_W) || IsKeyDown(KEY_A) || IsKeyDown(KEY_S) || IsKeyDown(KEY_D) ||
+                            IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT) ||
+                            IsKeyDown(KEY_U);
 
-            int speed; speed = 60 / options_menu.getValue(5);
+                int speed;
+                speed = 60 / options_menu.getValue(5);
 
-            if (!isAnyDown) runtime = speed;
-            else if (++runtime < speed)
-                break;
+                if (!isAnyDown) runtime = speed;
+                else if (++runtime < speed)
+                    break;
 
-            if (is_key(options_menu.getValue(0))) {
-                player.move(0, -1);
-                return;
-            }
-            else if (is_key(options_menu.getValue(2))) {
-                player.move(0, 1);
-                return;
-            }
-            else if (is_key(options_menu.getValue(1))) {
-                player.move(-1, 0);
-                return;
-            }
-            else if (is_key(options_menu.getValue(3))) {
-                player.move(1, 0);
-                return;
-            }
-            else if (is_key(options_menu.getValue(4))) {
-                player.undo_move();
-            }
-            if (mv_back()) {
-                PlaySound(backout);
-                game_state = RELOAD_REQ_STATE;
-                game_frame = 0;
+                if (is_key(options_menu.getValue(0))) {
+                    player.move(0, -1);
+                    return;
+                } else if (is_key(options_menu.getValue(2))) {
+                    player.move(0, 1);
+                    return;
+                } else if (is_key(options_menu.getValue(1))) {
+                    player.move(-1, 0);
+                    return;
+                } else if (is_key(options_menu.getValue(3))) {
+                    player.move(1, 0);
+                    return;
+                } else if (is_key(options_menu.getValue(4))) {
+                    player.undo_move();
+                }
+                if (mv_back()) {
+                    PlaySound(backout);
+                    game_state = RELOAD_REQ_STATE;
+                    game_frame = 0;
+                }
             }
             break;
         case RELOAD_REQ_STATE:
@@ -72,7 +74,7 @@ void update_game() {
 
 void draw_game() {
     game_frame++;
-    if (animation.state() != Animation::none) {
+    if (Animation::state() != Animation::none) {
         Animation::run();
     }
     else switch (game_state) {
@@ -98,6 +100,10 @@ void draw_game() {
             break;
         case RELOAD_REQ_STATE:
             if (game_frame != 1) pause.run();
+            break;
+        case STATISTIC_STATE:
+            level_stats();
+            statistics_menu.draw();
             break;
         case ENDING_STATE:
             draw_victory_menu();

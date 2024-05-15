@@ -156,7 +156,10 @@ public:
     static std::vector<std::string> fillOut(std::vector<std::string> &vector, const std::string &str);
 };
 
-extern size_t totalMoves;
+struct levelStatistics {
+    size_t steps;
+    size_t time;
+};
 
 class LevelManager {
 public:
@@ -171,9 +174,10 @@ public:
 
     void load(size_t offset = 0);
     void unload();
-    void reset() { index = 0; unload(); totalMoves = 0; }
+    void reset() { index = 0; unload(); stats.clear(); }
     static size_t get_index() { return index; }
     static void draw();
+    static std::vector<levelStatistics> stats;
 private:
     static Level* instance;
     static size_t index;
@@ -183,6 +187,7 @@ private:
 Level* LevelManager::instance = nullptr;
 size_t LevelManager::index = 0;
 std::vector<Level> LevelManager::levels;
+std::vector<levelStatistics> LevelManager::stats(3);
 
 class Player {
 public:

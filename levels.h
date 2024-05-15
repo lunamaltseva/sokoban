@@ -4,8 +4,7 @@
 #include "globals.h"
 #include "player.h"
 #include "draw.h"
-
-#include <cstddef>
+#include <cstdlib>
 
 void LevelManager::load(size_t offset) {
     game_state = GAME_STATE;
@@ -39,6 +38,8 @@ void LevelManager::load(size_t offset) {
     }
 
     derive_graphics_metrics_from_loaded_level();
+    Animation::transition(Animation::fade_in);
+    start_time = time(NULL);
 }
 
 int Level::count(char object) {
@@ -86,10 +87,10 @@ void Level::if_solved() {
     }
 
     if (level_solved) {
-        levelManager.unload();
-        levelManager.load(1);
         PlaySound(levelComplete);
+        Animation::transition(Animation::fade_out);
     }
+    LevelManager::stats[LevelManager::get_index()].time = time(NULL) - start_time;
 }
 
 #endif // LEVELS_H

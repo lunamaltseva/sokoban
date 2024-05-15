@@ -61,15 +61,13 @@ void draw_GUI() {
         draw_image((i < boxes_on_goals ? candle_on : candle_off), position.x, position.y, cell_size);
     }
 
-    for (int i = 0; i < (totalMoves/100); i++) {
+    for (int i = 0; i < ((LevelManager::stats[0].steps + LevelManager::stats[1].steps + LevelManager::stats[2].steps)/100); i++) {
         Vector2 position = {(float)(rand()%(int)(screen_width-cell_size)), screen_height-cell_size};
         draw_image(blood, position.x, position.y, cell_size);
     }
 }
 
 void draw_Menu() {
-    Text title("Catastrophic", RED, 80.0f, {0.2f, 0.2f}, 4.0f);
-    Text byline("By @lunamaltseva", GRAY, 30.0f, {0.2f, 0.85f}, 2.0f);
     title.draw();
     byline.draw();
     int minimum = std::min(screen_width, screen_height);
@@ -91,6 +89,10 @@ void OptionsMenu::draw() {
         Text text(parameters[i].valueType == Parameters::speed ? std::to_string(parameters[i].value) : std::string(1, static_cast<char>(parameters[i].value)), (i == selection && selected ? colorActive : colorInactive), size, {offset + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
         text.draw();
     }
+}
+
+void level_stats() {
+    MultilineText((std::string("STEPS: ") + std::to_string(LevelManager::stats[LevelManager::get_index()].steps) + " \nTIME:" + std::to_string(LevelManager::stats[LevelManager::get_index()].steps)), {0.0f, 0.075f}, WHITE, 50.0f, {0.5f, 0.6f}).draw();
 }
 
 void derive_graphics_metrics_from_loaded_level() {
@@ -148,7 +150,7 @@ Texture2D floorImage() {
     Texture2D result;
     int access = rand()%4+1;
     switch(access) {
-    case 1: case 2: result = floor1; break;
+        case 1: case 2: result = floor1; break;
         case 3: result = floor2; break;
         case 4: result = floor3; break;
     }
@@ -221,31 +223,50 @@ void create_victory_menu_background() {
 }
 
 void Animation::run() {
+    animation_frame++;
+
     switch (game_state) {
+        case SELECT_LEVEL_STATE:
+            select_level_menu.draw();
         case MENU_STATE:
             main_menu.draw();
             draw_Menu();
-        case SELECT_LEVEL_STATE:
-            select_level_menu.draw();
             break;
         case GAME_STATE:
             LevelManager::draw();
+            player.draw();
             draw_GUI();
+            break;
+        case STATISTIC_STATE:
+            level_stats();
+            select_level_menu.draw();
             break;
     }
 
     switch (state()) {
         case fade_in:
-            DrawRectangle(0, 0, screen_width, screen_height, {0,0,0,static_cast<unsigned char>(runtime*(255.0f/60.0f))});
+            DrawRectangle(0, 0, screen_width, screen_height, {0,0,0,static_cast<unsigned char>(256.0f-(animation_frame*(256.0f/animationDuration)))});
+            break;
         case fade_out:
-            DrawRectangle(0, 0, screen_width, screen_height, {0,0,0,static_cast<unsigned char>(runtime*(255.0f/60.0f))});
+            DrawRectangle(0, 0, screen_width, screen_height, {0,0,0,static_cast<unsigned char>(animation_frame*(250.0f/animationDuration))});
+            break;
     }
 
-    if (runtime > animationDuration) {
-        play_animation(none);
+    if (animation_frame >= animationDuration) {
+        transition(none);
         switch (game_state) {
-        case MENU_STATE: case SELECT_LEVEL_STATE:
-            game_state = GAME_STATE;
+            case MENU_STATE:
+                levelManager.load();
+                break;
+            case SELECT_LEVEL_STATE:
+                levelManager.load(select_level_menu.selected());
+                break;
+            case GAME_STATE:
+                if (state() == fade_out) {
+                    game_state = STATISTIC_STATE;
+                    transition(fade_in);
+                }
+                break;
         }
     }
 }
