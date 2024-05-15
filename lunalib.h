@@ -37,7 +37,7 @@ bool is_key(int check) {
 Font menu_font;
 class Text {
 public:
-    Text(const std::string text, Color color = WHITE, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, float spacing = 1.0f, Font *font = &menu_font)
+    Text(const std::string text, Color color = WHITE, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, float spacing = 4.0f, Font *font = &menu_font)
             : text(text), color(color), size(size), font(font), spacing(spacing), offsetPercent(offset) {}
     virtual void draw();
     void position(Vector2 position) {
@@ -54,7 +54,7 @@ protected:
 
 class MultilineText : public Text {
 public:
-    MultilineText(const std::string text, Vector2 dOffset = {0.0f, 0.075f}, Color color = WHITE, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, float spacing = 1.0f, Font *font = &menu_font)
+    MultilineText(const std::string text, Vector2 dOffset = {0.0f, 0.075f}, Color color = WHITE, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, float spacing = 4.0f, Font *font = &menu_font)
         : Text("", color, size, offset, spacing, font), dOffset(dOffset) {
         std::stringstream stream(text);
         while (!stream.eof()) {
@@ -84,7 +84,7 @@ private:
     Text OK = Text("continue", GRAY, 40.0f);
 };
 
-void draw_image(Texture2D image, float x, float y, float width, float height);
+void drawImage(Texture2D image, float x, float y, float width, float height);
 
 class Slide {
 public:
@@ -93,21 +93,39 @@ public:
     void draw() {
         caption.draw();
         float minimum = std::min(GetScreenHeight(), GetScreenWidth())*0.4f;
-        draw_image(picture, (GetScreenWidth()-(2*minimum))*0.5f, (GetScreenHeight()-minimum)*0.5f, 2*minimum, minimum);
+        drawImage(picture, (GetScreenWidth() - (2 * minimum)) * 0.5f, (GetScreenHeight() - minimum) * 0.5f, 2 * minimum,
+                  minimum);
     }
 private:
     Text caption;
     Texture2D picture;
 };
 
+extern int animationFrame;
+
 class Slideshow {
 public:
     explicit Slideshow(int time) : timePerSlide(time) {}
-    explicit Slideshow(std::vector<Slide> &slides, int time) : slides(slides), timePerSlide(time) {}
+    explicit Slideshow(std::vector<Slide> slides, int time) : slides(slides), timePerSlide(time) {}
     void add(const Slide &slide) { slides.push_back(slide); }
-    void draw() {
+    bool draw() {
+        if (itr >= slides.size()) return false;
+
+        animationFrame++;
+
         slides[itr].draw();
-        if (runtime > timePerSlide) itr++;
+        if (animationFrame > 0 && animationFrame < 45) {
+            DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), {0,0,0, static_cast<unsigned char>(256-(animationFrame*(256.0f/45)))});
+        }
+        else if (animationFrame > timePerSlide-45 && animationFrame <= timePerSlide) {
+            DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), {0,0,0, static_cast<unsigned char>(((animationFrame-(timePerSlide-45))*(250.0f/45)))});
+        }
+
+        if (animationFrame >= timePerSlide) {
+            itr++;
+            animationFrame = 0;
+        }
+        return true;
     }
 private:
     int timePerSlide;
@@ -174,7 +192,8 @@ public:
 
     void load(size_t offset = 0);
     void unload();
-    void reset() { index = 0; unload(); stats.clear(); }
+    void reset() { index = 0; unload(); }
+    void forceComplete();
     static size_t get_index() { return index; }
     static void draw();
     static std::vector<levelStatistics> stats;
@@ -224,7 +243,7 @@ extern Sound backout;
 
 class Menu {
 public:
-    Menu(std::vector<Option> entry, std::function<void()> backward, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 1.0f, Font *font = &menu_font)
+    Menu(std::vector<Option> entry, std::function<void()> backward, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 3.0f, Font *font = &menu_font)
             : entry(entry), backward(backward), colorActive(colorActive), colorInactive(colorInactive), size(size), font(font), spacing(spacing), offsetPercentInitial(offset), offsetPercentAdditional(offsetAdd), selection(0) {}
     void draw();
     void run();
@@ -247,7 +266,7 @@ struct Parameters {
 
 class OptionsMenu : public Menu {
 public:
-    OptionsMenu(std::vector<Option> entry, std::function<void()> backward, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 1.0f, Font *font = &menu_font)
+    OptionsMenu(std::vector<Option> entry, std::function<void()> backward, Color colorActive = WHITE, Color colorInactive = GRAY, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, Vector2 offsetAdd = {0.0f, 0.1f}, float spacing = 4.0f, Font *font = &menu_font)
     : Menu(entry, backward, colorActive, colorInactive, size, offset, offsetAdd, spacing, font) {}
 
     void draw();

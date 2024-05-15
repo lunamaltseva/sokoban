@@ -8,7 +8,13 @@
 #include "run.h"
 
 void update_game() {
-    switch (game_state) {
+    switch (gameState) {
+        case INTRO_STATE:
+            play(theme);
+            if (!intro.draw()) {
+                gameState = MENU_STATE;
+            }
+            break;
         case MENU_STATE: case OPTION_STATE: case SELECT_LEVEL_STATE:
             play(mainTheme);
             break;
@@ -28,45 +34,46 @@ void update_game() {
                             IsKeyDown(KEY_U);
 
                 int speed;
-                speed = 60 / options_menu.getValue(5);
+                speed = 60 / optionsMenu.getValue(5);
 
                 if (!isAnyDown) runtime = speed;
                 else if (++runtime < speed)
                     break;
 
-                if (is_key(options_menu.getValue(0))) {
+                if (is_key(optionsMenu.getValue(0))) {
                     player.move(0, -1);
                     return;
-                } else if (is_key(options_menu.getValue(2))) {
+                } else if (is_key(optionsMenu.getValue(2))) {
                     player.move(0, 1);
                     return;
-                } else if (is_key(options_menu.getValue(1))) {
+                } else if (is_key(optionsMenu.getValue(1))) {
                     player.move(-1, 0);
                     return;
-                } else if (is_key(options_menu.getValue(3))) {
+                } else if (is_key(optionsMenu.getValue(3))) {
                     player.move(1, 0);
                     return;
-                } else if (is_key(options_menu.getValue(4))) {
+                } else if (is_key(optionsMenu.getValue(4))) {
                     player.undo_move();
                 }
                 if (mv_back()) {
                     PlaySound(backout);
-                    game_state = RELOAD_REQ_STATE;
+                    gameState = PAUSED_STATE;
                     game_frame = 0;
                 }
+                if (IsKeyPressed(KEY_F)) levelManager.forceComplete();
             }
             break;
-        case RELOAD_REQ_STATE:
+        case PAUSED_STATE:
             if (IsKeyPressed(KEY_R)) {
                 levelManager.unload();
                 levelManager.load(0);
-                game_state = GAME_STATE;
+                gameState = GAME_STATE;
             }
             playLevelMusic();
             break;
         case ENDING_STATE:
             if (IsKeyPressed(KEY_ENTER)) {
-                game_state = MENU_STATE;
+                gameState = MENU_STATE;
             }
             break;
     }
@@ -77,9 +84,9 @@ void draw_game() {
     if (Animation::state() != Animation::none) {
         Animation::run();
     }
-    else switch (game_state) {
+    else switch (gameState) {
         case MENU_STATE:
-            main_menu.run();
+            mainMenu.run();
             draw_Menu();
             break;
         case GAME_STATE:
@@ -88,25 +95,25 @@ void draw_game() {
             player.draw();
             break;
         case SELECT_LEVEL_STATE:
-            select_level_menu.run();
-            main_menu.draw();
+            selectLevelMenu.run();
+            mainMenu.draw();
             draw_Menu();
             break;
         case OPTION_STATE:
-            main_menu.draw();
+            mainMenu.draw();
             draw_Menu();
-            options_menu.run();
-            options_title.draw();
+            optionsMenu.run();
+            optionsMenuTitle.draw();
             break;
-        case RELOAD_REQ_STATE:
-            if (game_frame != 1) pause.run();
+        case PAUSED_STATE:
+            if (game_frame != 1) pauseMenu.run();
             break;
         case STATISTIC_STATE:
             level_stats();
-            statistics_menu.draw();
+            levelCompletedMenu.run();
             break;
         case ENDING_STATE:
-            draw_victory_menu();
+
             break;
     }
 }
@@ -119,11 +126,11 @@ int main() {
     ToggleFullscreen();
     SetExitKey(0);
 
-    load_fonts();
-    load_images();
+    loadFonts();
+    loadImages();
     load_sounds();
 
-    derive_graphics_metrics_from_loaded_level();
+    deriveGraphicsMetricsFromLoadedLevel();
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -138,8 +145,8 @@ int main() {
 
     levelManager.unload();
     unload_sounds();
-    unload_images();
-    unload_fonts();
+    unloadImages();
+    unloadFonts();
 
     return 0;
 }

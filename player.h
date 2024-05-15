@@ -12,7 +12,7 @@ void Player::setImage(Texture2D texture) {
 }
 
 void Player::spawn(size_t row, size_t column) {
-    player.setImage(player_regular);
+    player.setImage(playerRegular);
     movements.clear();
     was_box_moved.clear();
     this->row = row;
@@ -70,8 +70,8 @@ void Player::move(size_t dx, size_t dy) {
     }
 
     movements.push_back({dx, dy});
-    if (dx==1) player.setImage(player_regular);
-    else if (dx==-1) player.setImage(player_invert);
+    if (dx==1) player.setImage(playerRegular);
+    else if (dx==-1) player.setImage(playerInvert);
     runtime = 0;
 
     LevelManager::stats[LevelManager::get_index()].steps++;
@@ -110,8 +110,8 @@ void Player::undo_move() {
     row    -= d_pos.y;
     column -= d_pos.x;
 
-    if (d_pos.x == 1) player.setImage(player_regular);
-    else if (d_pos.x == -1) player.setImage(player_invert);
+    if (d_pos.x == 1) player.setImage(playerRegular);
+    else if (d_pos.x == -1) player.setImage(playerInvert);
     runtime = 0;
 
     PlaySound(undo);

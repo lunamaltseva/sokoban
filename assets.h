@@ -8,21 +8,21 @@
 #include <string>
 #include <cassert>
 
-void load_fonts() {
+void loadFonts() {
     menu_font = LoadFontEx(nullptr, 128, nullptr, 0);
 }
 
-void unload_fonts() {
+void unloadFonts() {
     UnloadFont(menu_font);
 }
 
-void load_images() {
-    player_regular      = LoadTexture("data/images/player.png");
-    player_invert       = LoadTexture("data/images/player_inv.png");
+void loadImages() {
+    playerRegular      = LoadTexture("data/images/player.png");
+    playerInvert       = LoadTexture("data/images/player_inv.png");
 
-    goal_image          = LoadTexture("data/images/goal.png");
-    box_image           = LoadTexture("data/images/box.png");
-    box_on_goal_image   = LoadTexture("data/images/box-on-goal.png");
+    goalImage          = LoadTexture("data/images/goal.png");
+    boxImage           = LoadTexture("data/images/box.png");
+    boxOnGoalImage   = LoadTexture("data/images/box-on-goal.png");
 
     floor1              = LoadTexture("data/images/floor/floor.png");
     floor2              = LoadTexture("data/images/floor/grass.png");
@@ -37,28 +37,41 @@ void load_images() {
     wilderness2         = LoadTexture("data/images/wall/wilderness2.png");
     wilderness3         = LoadTexture("data/images/wall/wilderness3.png");
 
-    candle_off          = LoadTexture("data/images/candle_off.png");
-    candle_on           = LoadTexture("data/images/candle_on.png");
+    candleOff          = LoadTexture("data/images/candleOff.png");
+    candleOn           = LoadTexture("data/images/candleOn.png");
     blood               = LoadTexture("data/images/blood.png");
 
     intro1              = LoadTexture("data/images/slides/intro1.png");
     intro2              = LoadTexture("data/images/slides/intro2.png");
     intro3              = LoadTexture("data/images/slides/intro3.png");
     intro4              = LoadTexture("data/images/slides/intro4.png");
-    ending_good1        = LoadTexture("data/images/slides/final_good1.png");
-    ending_good2        = LoadTexture("data/images/slides/final_good2.png");
-    ending_good3        = LoadTexture("data/images/slides/final_good3.png");
-    ending_bad1         = LoadTexture("data/images/slides/final_bad1.png");
-    ending_bad2         = LoadTexture("data/images/slides/final_bad2.png");
-    ending_bad3         = LoadTexture("data/images/slides/final_bad3.png");
+    endingGood1        = LoadTexture("data/images/slides/final_good1.png");
+    endingGood2        = LoadTexture("data/images/slides/final_good2.png");
+    endingGood3        = LoadTexture("data/images/slides/final_good3.png");
+    endingBad1         = LoadTexture("data/images/slides/final_bad1.png");
+    endingBad2         = LoadTexture("data/images/slides/final_bad2.png");
+    endingBad3         = LoadTexture("data/images/slides/final_bad3.png");
 
-    player.setImage(player_regular);
+    intro.add({"I always was a happy cat...",                     intro1});
+    intro.add({"...helping my owner do his undertaker's job.",    intro2});
+    intro.add({"Until... They died.",                             intro3});
+    intro.add( {"They all died.",                                 intro4});
+
+    endingGood.add({"Oh, how I miss you...",                           endingGood1});
+    endingGood.add({"!!!",                                             endingGood2});
+    endingGood.add({"\"Here's looking at you, kitten.\"",              endingGood3});
+
+    endingBad.add( {"Sweet death embrace, depart me from this world!",  endingBad1});
+    endingBad.add( {"...",                                              endingBad2});
+    endingBad.add( {"\"Sigh. What am I going to do with you, kitten.\"",endingBad3});
+
+    player.setImage(playerRegular);
 }
 
-void unload_images() {
-    UnloadTexture(goal_image);
-    UnloadTexture(box_image);
-    UnloadTexture(box_on_goal_image);
+void unloadImages() {
+    UnloadTexture(goalImage);
+    UnloadTexture(boxImage);
+    UnloadTexture(boxOnGoalImage);
 }
 
 void load_sounds() {
@@ -99,39 +112,39 @@ void play(Music music) {
     UpdateMusicStream(music);
 }
 
-void draw_image(Texture2D image, float x, float y, float size) {
-    draw_image(image, x, y, size, size);
+void drawImage(Texture2D image, float x, float y, float size) {
+    drawImage(image, x, y, size, size);
 }
 
-void draw_image(Texture2D image, float x, float y, float width, float height) {
+void drawImage(Texture2D image, float x, float y, float width, float height) {
     Rectangle source = { 0.0f, 0.0f, static_cast<float>(image.width), static_cast<float>(image.height) };
     Rectangle destination = { x, y, width, height };
     DrawTexturePro(image, source, destination, { 0.0f, 0.0f }, 0.0f, WHITE);
 }
 
-sprite load_sprite(
-    const std::string &file_name_prefix,
-    const std::string &file_name_suffix,
-    size_t frame_count,
+sprite loadSprite(
+    const std::string &fileNamePrefix,
+    const std::string &fileNameSuffix,
+    size_t frameCount,
     bool loop,
-    size_t frames_to_skip
+    size_t framesToSkip
 ) {
-    assert(frame_count < 100);
+    assert(frameCount < 100);
 
     sprite result = {
-        frame_count, frames_to_skip, 0, 0, loop, 0, new Texture2D[frame_count]
+            frameCount, framesToSkip, 0, 0, loop, 0, new Texture2D[frameCount]
     };
 
-    for (size_t i = 0; i < frame_count; ++i) {
+    for (size_t i = 0; i < frameCount; ++i) {
         std::string file_name;
-        if (frame_count < 10) {
-            file_name = file_name_prefix;
+        if (frameCount < 10) {
+            file_name = fileNamePrefix;
             file_name += std::to_string(i);
-            file_name += file_name_suffix;
+            file_name += fileNameSuffix;
         } else {
-            file_name = file_name_prefix;
+            file_name = fileNamePrefix;
             file_name += i < 10 ? ("0" + std::to_string(i)) : std::to_string(i);
-            file_name += file_name_suffix;
+            file_name += fileNameSuffix;
         }
         result.frames[i] = LoadTexture(file_name.c_str());
     }
@@ -139,37 +152,37 @@ sprite load_sprite(
     return result;
 }
 
-void unload_sprite(sprite &sprite) {
+void unloadSprite(sprite &sprite) {
     assert(sprite.frames != nullptr);
 
-    for (size_t i = 0; i < sprite.frame_count; ++i) {
+    for (size_t i = 0; i < sprite.frameCount; ++i) {
         UnloadTexture(sprite.frames[i]);
     }
     delete[] sprite.frames;
     sprite.frames = nullptr;
 }
 
-void draw_sprite(sprite &sprite, float x, float y, float size) {
-    draw_sprite(sprite, x, y, size, size);
+void drawSprite(sprite &sprite, float x, float y, float size) {
+    drawSprite(sprite, x, y, size, size);
 }
 
-void draw_sprite(sprite &sprite, float x, float y, float width, float height) {
-    draw_image(sprite.frames[sprite.frame_index], x, y, width, height);
+void drawSprite(sprite &sprite, float x, float y, float width, float height) {
+    drawImage(sprite.frames[sprite.frameIndex], x, y, width, height);
 
-    if (sprite.prev_game_frame == game_frame) {
+    if (sprite.prevGameFrame == game_frame) {
         return;
     }
-    if (sprite.frames_skipped < sprite.frames_to_skip) {
-        ++sprite.frames_skipped;
+    if (sprite.framesSkipped < sprite.framesToSkip) {
+        ++sprite.framesSkipped;
     } else {
-        sprite.frames_skipped = 0;
+        sprite.framesSkipped = 0;
 
-        ++sprite.frame_index;
-        if (sprite.frame_index >= sprite.frame_count) {
-            sprite.frame_index = sprite.loop ? 0 : sprite.frame_count - 1;
+        ++sprite.frameIndex;
+        if (sprite.frameIndex >= sprite.frameCount) {
+            sprite.frameIndex = sprite.loop ? 0 : sprite.frameCount - 1;
         }
     }
-    sprite.prev_game_frame = game_frame;
+    sprite.prevGameFrame = game_frame;
 }
 
 #endif // IMAGES_H

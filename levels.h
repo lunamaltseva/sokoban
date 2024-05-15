@@ -7,13 +7,12 @@
 #include <cstdlib>
 
 void LevelManager::load(size_t offset) {
-    game_state = GAME_STATE;
+    gameState = GAME_STATE;
 
     index+=offset;
     if (index >= levels.size()) {
         index = 0;
-        game_state = ENDING_STATE;
-        create_victory_menu_background();
+        gameState = ENDING_STATE;
     }
 
     Level* level = LevelManager::getInstance();
@@ -37,9 +36,9 @@ void LevelManager::load(size_t offset) {
         }
     }
 
-    derive_graphics_metrics_from_loaded_level();
+    deriveGraphicsMetricsFromLoadedLevel();
     Animation::transition(Animation::fade_in);
-    start_time = time(NULL);
+    startTime = time(NULL);
 }
 
 int Level::count(char object) {
@@ -90,7 +89,13 @@ void Level::if_solved() {
         PlaySound(levelComplete);
         Animation::transition(Animation::fade_out);
     }
-    LevelManager::stats[LevelManager::get_index()].time = time(NULL) - start_time;
+    LevelManager::stats[LevelManager::get_index()].time = time(NULL) - startTime;
+}
+
+void LevelManager::forceComplete() {
+    PlaySound(levelComplete);
+    Animation::transition(Animation::fade_out);
+    LevelManager::stats[LevelManager::get_index()].time = time(NULL) - startTime;
 }
 
 #endif // LEVELS_H

@@ -7,8 +7,8 @@
 void playLevelMusic() {
     switch(levelManager.get_index()) {
         case 0: play(house); break;
-        case 1: play(house); break;
-        case 2: play(house); break;
+        case 1: play(town); break;
+        case 2: play(forest); break;
     }
 }
 

@@ -18,8 +18,8 @@ void Text::draw() {
     dimensions = MeasureTextEx(*font, text.c_str(), size, spacing);
 
     Vector2 pos = {
-            (screen_width *offsetPercent.x)-(0.5f*dimensions.x) + 0.75f*((cosf(rand()%10*game_frame)+sinf(rand()%4*game_frame))),
-            (screen_height*offsetPercent.y)-(0.5f*dimensions.y)
+            (screenWidth * offsetPercent.x) - (0.5f * dimensions.x) + 0.75f * ((cosf(rand() % 10 * game_frame) + sinf(rand() % 4 * game_frame))),
+            (screenHeight * offsetPercent.y) - (0.5f * dimensions.y)
     };
     DrawTextEx(*font, text.c_str(), pos, dimensions.y, spacing, color);
 }
@@ -32,18 +32,18 @@ void MultilineText::draw() {
 
 void Prompt::draw() {
     Vector2 size = {0,0};
-    size.y = title.size +(contents.dOffset.y*screen_height*static_cast<float>(contents.lines.size()));
+    size.y = title.size +(contents.dOffset.y * screenHeight * static_cast<float>(contents.lines.size()));
     for (auto &el : contents.lines) {
         if (MeasureTextEx(*contents.font, el.c_str(), contents.size, contents.spacing).x > size.x)
             size.x = MeasureTextEx(*contents.font, el.c_str(), contents.size, contents.spacing).x;
     }
-    Vector2 sizePercent = {((screen_width-size.x)*0.5f)/screen_width, ((screen_height-size.y)*0.5f)/screen_height};
+    Vector2 sizePercent = {((screenWidth - size.x) * 0.5f) / screenWidth, ((screenHeight - size.y) * 0.5f) / screenHeight};
     title.position({0.5f, sizePercent.y});
-    contents.position({0.5f, sizePercent.y+((title.size+30.0f)/screen_height)});
-    OK.position({0.5f, ((size.y+screen_height)*0.52f)/screen_height});
+    contents.position({0.5f, sizePercent.y+((title.size+30.0f) / screenHeight)});
+    OK.position({0.5f, ((size.y + screenHeight) * 0.52f) / screenHeight});
 
-    DrawRectangle((screen_width-size.x)*0.5f-80.0f, (screen_height-size.y)*0.5f-80.0f, size.x+160.0f, size.y+160.0f, BLACK);
-    DrawRectangleLinesEx({(screen_width-size.x)*0.5f-80.0f, (screen_height-size.y)*0.5f-80.0f, size.x+160.0f, size.y+160.0f}, 5.0f, WHITE);
+    DrawRectangle((screenWidth - size.x) * 0.5f - 80.0f, (screenHeight - size.y) * 0.5f - 80.0f, size.x + 160.0f, size.y + 160.0f, BLACK);
+    DrawRectangleLinesEx({(screenWidth - size.x) * 0.5f - 80.0f, (screenHeight - size.y) * 0.5f - 80.0f, size.x + 160.0f, size.y + 160.0f}, 5.0f, WHITE);
 
     title.draw();
     contents.draw();
@@ -57,23 +57,25 @@ void draw_GUI() {
     boxes+=boxes_on_goals;
 
     for (int i = 0; i < boxes; i++) {
-        Vector2 position = {screen_width*0.5f+((float)(rand()%(int)(0.5f*screen_width))-0.25f*screen_width), screen_height-cell_size};
-        draw_image((i < boxes_on_goals ? candle_on : candle_off), position.x, position.y, cell_size);
+        Vector2 position = {screenWidth * 0.5f + ((float)(rand() % (int)(0.5f * screenWidth)) - 0.25f * screenWidth), screenHeight - cellSize};
+        drawImage((i < boxes_on_goals ? candleOn : candleOff), position.x, position.y, cellSize);
     }
 
     for (int i = 0; i < ((LevelManager::stats[0].steps + LevelManager::stats[1].steps + LevelManager::stats[2].steps)/100); i++) {
-        Vector2 position = {(float)(rand()%(int)(screen_width-cell_size)), screen_height-cell_size};
-        draw_image(blood, position.x, position.y, cell_size);
+        Vector2 position = {(float)(rand()%(int)(screenWidth - cellSize)), screenHeight - cellSize};
+        drawImage(blood, position.x, position.y, cellSize);
     }
 }
 
 void draw_Menu() {
-    title.draw();
-    byline.draw();
-    int minimum = std::min(screen_width, screen_height);
+    mainMenuTitle.draw();
+    mainMenuByline.draw();
+    int minimum = std::min(screenWidth, screenHeight);
     float scale = minimum*0.25f;
-    draw_image(goal_image, screen_width-(scale*1.75f), screen_height-(scale*1.5f), scale);
-    draw_image(player_regular, screen_width-(scale*3.0f)+ 0.75f*((cosf(rand()%10*game_frame)+sinf(rand()%4*game_frame))), screen_height-(scale*1.5f), scale);
+    drawImage(goalImage, screenWidth - (scale * 1.75f), screenHeight - (scale * 1.5f), scale);
+    drawImage(playerRegular,
+              screenWidth - (scale * 3.0f) + 0.75f * ((cosf(rand() % 10 * game_frame) + sinf(rand() % 4 * game_frame))),
+              screenHeight - (scale * 1.5f), scale);
 }
 
 void Menu::draw() {
@@ -92,27 +94,27 @@ void OptionsMenu::draw() {
 }
 
 void level_stats() {
-    MultilineText((std::string("STEPS: ") + std::to_string(LevelManager::stats[LevelManager::get_index()].steps) + " \nTIME:" + std::to_string(LevelManager::stats[LevelManager::get_index()].steps)), {0.0f, 0.075f}, WHITE, 50.0f, {0.5f, 0.6f}).draw();
+    MultilineText((std::string("STATISTICS\nSTEPS: ") + std::to_string(LevelManager::stats[LevelManager::get_index()].steps) + " \nTIME: " + std::to_string(LevelManager::stats[LevelManager::get_index()].steps)), {0.0f, 0.075f}, WHITE, 50.0f, {0.5f, 0.3f}).draw();
 }
 
-void derive_graphics_metrics_from_loaded_level() {
+void deriveGraphicsMetricsFromLoadedLevel() {
     Level *level = LevelManager::getInstance();
 
-    screen_width  = static_cast<float>(GetScreenWidth());
-    screen_height = static_cast<float>(GetScreenHeight());
+    screenWidth  = static_cast<float>(GetScreenWidth());
+    screenHeight = static_cast<float>(GetScreenHeight());
 
-    cell_size = std::min(
-        screen_width  / static_cast<float>(level->width()),
-        screen_height / static_cast<float>(level->height())
+    cellSize = std::min(
+            screenWidth / static_cast<float>(level->width()),
+            screenHeight / static_cast<float>(level->height())
     ) * CELL_SCALE;
-    screen_scale = std::min(
-        screen_width,
-        screen_height
+    screenScale = std::min(
+            screenWidth,
+            screenHeight
     ) / SCREEN_SCALE_DIVISOR;
-    float level_width  = static_cast<float>(level->width()) * cell_size;
-    float level_height = static_cast<float>(level->height())    * cell_size;
-    shift_to_center_cell_by_x = (screen_width - level_width)   * 0.5f;
-    shift_to_center_cell_by_y = (screen_height - level_height) * 0.3f;
+    float level_width  = static_cast<float>(level->width()) * cellSize;
+    float level_height = static_cast<float>(level->height()) * cellSize;
+    shiftToCenterCellByX = (screenWidth - level_width) * 0.5f;
+    shiftToCenterCellByY = (screenHeight - level_height) * 0.3f;
 }
 
 Texture2D wall_image() {
@@ -164,27 +166,27 @@ void LevelManager::draw() {
 
     for (size_t row = 0; row < level->height(); ++row) {
         for (size_t column = 0; column < level->width(); ++column) {
-            float x = shift_to_center_cell_by_x + static_cast<float>(column) * cell_size;
-            float y = shift_to_center_cell_by_y + static_cast<float>(row)    * cell_size;
+            float x = shiftToCenterCellByX + static_cast<float>(column) * cellSize;
+            float y = shiftToCenterCellByY + static_cast<float>(row) * cellSize;
 
             char cell = level->get_cell(row, column);
             switch (cell) {
                 case Level::WALL:
-                    draw_image(wall_image(), x, y, cell_size);
+                    drawImage(wall_image(), x, y, cellSize);
                     break;
                 case Level::GOAL:
                     if (!(player.get_row() == row && player.get_column() == column))
-                        draw_image(goal_image, x, y, cell_size);
+                        drawImage(goalImage, x, y, cellSize);
                     break;
                 case Level::BOX:
-                    draw_image(floorImage(), x, y, cell_size);
-                    draw_image(box_image, x, y, cell_size);
+                    drawImage(floorImage(), x, y, cellSize);
+                    drawImage(boxImage, x, y, cellSize);
                     break;
                 case Level::BOX_ON_GOAL:
-                    draw_image(box_on_goal_image, x, y, cell_size);
+                    drawImage(boxOnGoalImage, x, y, cellSize);
                     break;
                 case Level::FLOOR:
-                    draw_image(floorImage(), x, y, cell_size);
+                    drawImage(floorImage(), x, y, cellSize);
                     break;
                 default:
                     break;
@@ -194,42 +196,19 @@ void LevelManager::draw() {
 }
 
 void Player::draw() {
-    float x = shift_to_center_cell_by_x + static_cast<float>(column) * cell_size;
-    float y = shift_to_center_cell_by_y + static_cast<float>(row)    * cell_size;
-    draw_image(image, x, y, cell_size);
-}
-
-void create_victory_menu_background() {
-    for (auto &ball : victory_balls) {
-        ball.x  = rand_up_to(screen_width);
-        ball.y  = rand_up_to(screen_height);
-        ball.dx = rand_from_to(-VICTORY_BALL_MAX_SPEED, VICTORY_BALL_MAX_SPEED);
-        ball.dx *= screen_scale;
-        if (abs(ball.dx) < 0E-1) ball.dx = 1.0f;
-        ball.dy = rand_from_to(-VICTORY_BALL_MAX_SPEED, VICTORY_BALL_MAX_SPEED);
-        ball.dy *= screen_scale;
-        if (abs(ball.dy) < 0E-1) ball.dy = 1.0f;
-        ball.radius = rand_from_to(VICTORY_BALL_MIN_RADIUS, VICTORY_BALL_MAX_RADIUS);
-        ball.radius *= screen_scale;
-    }
-
-    /* Clear both the front buffer and the back buffer to avoid ghosting of the game graphics. */
-    ClearBackground(BLACK);
-    EndDrawing();
-    BeginDrawing();
-    ClearBackground(BLACK);
-    EndDrawing();
-    BeginDrawing();
+    float x = shiftToCenterCellByX + static_cast<float>(column) * cellSize;
+    float y = shiftToCenterCellByY + static_cast<float>(row) * cellSize;
+    drawImage(image, x, y, cellSize);
 }
 
 void Animation::run() {
-    animation_frame++;
+    animationFrame++;
 
-    switch (game_state) {
+    switch (gameState) {
         case SELECT_LEVEL_STATE:
-            select_level_menu.draw();
+            selectLevelMenu.draw();
         case MENU_STATE:
-            main_menu.draw();
+            mainMenu.draw();
             draw_Menu();
             break;
         case GAME_STATE:
@@ -237,73 +216,58 @@ void Animation::run() {
             player.draw();
             draw_GUI();
             break;
+        case PAUSED_STATE:
+            pauseMenu.draw();
+            break;
         case STATISTIC_STATE:
             level_stats();
-            select_level_menu.draw();
+            levelCompletedMenu.draw();
             break;
     }
 
     switch (state()) {
         case fade_in:
-            DrawRectangle(0, 0, screen_width, screen_height, {0,0,0,static_cast<unsigned char>(256.0f-(animation_frame*(256.0f/animationDuration)))});
+            DrawRectangle(0, 0, screenWidth, screenHeight, {0, 0, 0, static_cast<unsigned char>(256.0f - (animationFrame * (256.0f / animationDuration)))});
             break;
         case fade_out:
-            DrawRectangle(0, 0, screen_width, screen_height, {0,0,0,static_cast<unsigned char>(animation_frame*(250.0f/animationDuration))});
+            DrawRectangle(0, 0, screenWidth, screenHeight, {0, 0, 0, static_cast<unsigned char>(animationFrame * (250.0f / animationDuration))});
             break;
     }
 
-    if (animation_frame >= animationDuration) {
-        transition(none);
-        switch (game_state) {
+    if (animationFrame >= animationDuration) {
+        switch (gameState) {
             case MENU_STATE:
-                levelManager.load();
+                if (state() == fade_out) levelManager.load();
+                else transition(none);
                 break;
             case SELECT_LEVEL_STATE:
-                levelManager.load(select_level_menu.selected());
+                levelManager.load(selectLevelMenu.selected());
                 break;
             case GAME_STATE:
+                if (state() == fade_in) transition(none);
                 if (state() == fade_out) {
-                    game_state = STATISTIC_STATE;
+                    gameState = STATISTIC_STATE;
                     transition(fade_in);
                 }
                 break;
+            case PAUSED_STATE:
+                if (pauseMenu.selected() == 1) {
+                    levelManager.unload();
+                    levelManager.load();
+                }
+                else if (pauseMenu.selected() == 2) {
+                    gameState = MENU_STATE;
+                    transition(fade_in);
+                    levelManager.reset();
+                }
+                break;
+            case STATISTIC_STATE:
+                if (state() == fade_in) {transition(none);break;}
+                levelManager.unload();
+                levelManager.load(1 - levelCompletedMenu.selected());
+                break;
         }
     }
-}
-
-void animate_victory_menu_background() {
-    for (auto &ball : victory_balls) {
-        ball.x += ball.dx;
-        if (ball.x - ball.radius < 0 ||
-            ball.x + ball.radius >= screen_width) {
-            ball.dx = -ball.dx;
-        }
-        ball.y += ball.dy;
-        if (ball.y - ball.radius < 0 ||
-            ball.y + ball.radius >= screen_height) {
-            ball.dy = -ball.dy;
-        }
-    }
-}
-
-void draw_victory_menu_background() {
-    for (auto &ball : victory_balls) {
-        DrawCircleV({ ball.x, ball.y }, ball.radius, VICTORY_BALL_COLOR);
-    }
-}
-
-void draw_victory_menu() {
-    DrawRectangle(
-        0, 0,
-        static_cast<int>(screen_width), static_cast<int>(screen_height),
-        { 0, 0, 0, VICTORY_BALL_TRAIL_TRANSPARENCY }
-    );
-
-    animate_victory_menu_background();
-    draw_victory_menu_background();
-
-    victory_title.draw();
-    victory_subtitle.draw();
 }
 
 #endif // GRAPHICS_H

@@ -3,7 +3,7 @@ Sokoban
 
 ![Sokoban Game](https://i.imgur.com/9HtXYzH.png)
 
-The primary objective of this project is to refactor and enhance a simple [Sokoban](https://en.wikipedia.org/wiki/Sokoban) clone, originally written in a procedural programming style in C++, into an object-oriented design utilizing C++. This transformation should focus on encapsulating game functionalities into classes and objects, specifically targeting game levels and the player character code. Additionally, the project involves altering the level loading mechanism to dynamically parse level designs from `.sl` files, which utilize a specific run-length encoding format for level representation. A detailed description of the `.sl` file format can be found [here](http://www.sokobano.de/wiki/index.php?title=Level_format).
+The primary objective of this project is to refactor and enhance a simple [Sokoban](https://en.wikipedia.org/wiki/Sokoban) clone, originally written in a procedural programming style in C++, into an object-oriented design utilizing C++. This transformation should focus on encapsulating game functionalities into classes and objects, specifically targeting game levels and the player character code. Additionally, the project involves altering the level loading mechanism to dynamically parse level designs from `.sl` files, which utilize a specific run-length encoding format for level representation. A detailed description of the `.sl` file format can be found [here](http://www.sokobano.de/wiki/index.php?mainMenuTitle=Level_format).
 
 ![Level 1 of the Sokoban Game](https://i.imgur.com/m36ioBe.png)
 ![Nearly finished Level 1 of the Sokoban Game](https://i.imgur.com/GKzoLfF.png)
