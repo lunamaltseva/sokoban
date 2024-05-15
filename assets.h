@@ -17,12 +17,13 @@ void unloadFonts() {
 }
 
 void loadImages() {
-    playerRegular      = LoadTexture("data/images/player.png");
-    playerInvert       = LoadTexture("data/images/player_inv.png");
+    playerRegular       = LoadTexture("data/images/player.png");
+    playerInvert        = LoadTexture("data/images/player_inv.png");
+    owner               = LoadTexture("data/images/owner.png");
 
-    goalImage          = LoadTexture("data/images/goal.png");
-    boxImage           = LoadTexture("data/images/box.png");
-    boxOnGoalImage   = LoadTexture("data/images/box-on-goal.png");
+    goalImage           = LoadTexture("data/images/goal.png");
+    boxImage            = LoadTexture("data/images/box.png");
+    boxOnGoalImage      = LoadTexture("data/images/box-on-goal.png");
 
     floor1              = LoadTexture("data/images/floor/floor.png");
     floor2              = LoadTexture("data/images/floor/grass.png");
@@ -37,20 +38,20 @@ void loadImages() {
     wilderness2         = LoadTexture("data/images/wall/wilderness2.png");
     wilderness3         = LoadTexture("data/images/wall/wilderness3.png");
 
-    candleOff          = LoadTexture("data/images/candle_off.png");
-    candleOn           = LoadTexture("data/images/candle_on.png");
+    candleOff           = LoadTexture("data/images/candle_off.png");
+    candleOn            = LoadTexture("data/images/candle_on.png");
     blood               = LoadTexture("data/images/blood.png");
 
     intro1              = LoadTexture("data/images/slides/intro1.png");
     intro2              = LoadTexture("data/images/slides/intro2.png");
     intro3              = LoadTexture("data/images/slides/intro3.png");
     intro4              = LoadTexture("data/images/slides/intro4.png");
-    endingGood1        = LoadTexture("data/images/slides/final_good1.png");
-    endingGood2        = LoadTexture("data/images/slides/final_good2.png");
-    endingGood3        = LoadTexture("data/images/slides/final_good3.png");
-    endingBad1         = LoadTexture("data/images/slides/final_bad1.png");
-    endingBad2         = LoadTexture("data/images/slides/final_bad2.png");
-    endingBad3         = LoadTexture("data/images/slides/final_bad3.png");
+    endingGood1         = LoadTexture("data/images/slides/final_good1.png");
+    endingGood2         = LoadTexture("data/images/slides/final_good2.png");
+    endingGood3         = LoadTexture("data/images/slides/final_good3.png");
+    endingBad1          = LoadTexture("data/images/slides/final_bad1.png");
+    endingBad2          = LoadTexture("data/images/slides/final_bad2.png");
+    endingBad3          = LoadTexture("data/images/slides/final_bad3.png");
 
     intro.add({"I always was a happy cat...",                     intro1});
     intro.add({"...helping my owner do his undertaker's job.",    intro2});
@@ -58,7 +59,7 @@ void loadImages() {
     intro.add( {"They all died.",                                 intro4});
 
     endingGood.add({"Oh, how I miss you...",                           endingGood1});
-    endingGood.add({"!!!",                                             endingGood2});
+    endingGood.add({"My God! It cannot be!",                           endingGood2});
     endingGood.add({"\"Here's looking at you, kitten.\"",              endingGood3});
 
     endingBad.add( {"Sweet death embrace, depart me from this world!",  endingBad1});

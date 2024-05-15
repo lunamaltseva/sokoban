@@ -108,6 +108,10 @@ public:
     explicit Slideshow(int time) : timePerSlide(time) {}
     explicit Slideshow(std::vector<Slide> slides, int time) : slides(slides), timePerSlide(time) {}
     void add(const Slide &slide) { slides.push_back(slide); }
+    int position() {
+        return itr;
+    }
+
     bool draw() {
         if (itr >= slides.size()) {
             itr = 0;
@@ -195,7 +199,7 @@ public:
 
     void load(size_t offset = 0);
     void unload();
-    void reset() { index = 0; unload(); }
+    void reset() { index = 0; unload(); stats[0].steps = stats[1].steps = stats[2].steps = 0; }
     void forceComplete();
     static size_t get_index() { return index; }
     static size_t get_size() { return levels.size(); }

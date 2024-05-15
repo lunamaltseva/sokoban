@@ -7,19 +7,24 @@
 #include <cstdlib>
 
 void LevelManager::load(size_t offset) {
-
     index+=offset;
 
-    if (index >= 3) {
+    if (stats[0].steps == 0 && index > 0) stats[0].steps = 238;
+    if (stats[1].steps == 0 && index > 1) stats[1].steps = 493;
+
+    if (index >= levels.size()-1) {
         index = 0;
         gameState = ENDING_STATE;
         Animation::transition(Animation::none);
+        play(hurt);
         return;
     }
 
     gameState = GAME_STATE;
 
     Level* level = LevelManager::getInstance();
+
+    stats[index] = {0, 0};
 
     level->rows    = levels[index].rows;
     level->columns = levels[index].columns;

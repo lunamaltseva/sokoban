@@ -7,6 +7,8 @@
 #include <string>
 #include <cstddef>
 
+bool isGameCompleted = false;
+
 /* Loaded Level Data */
 
 LevelManager levelManager;
@@ -84,6 +86,7 @@ long startTime;
 
 Texture2D playerRegular;
 Texture2D playerInvert;
+Texture2D owner;
 
 Texture2D goalImage;
 Texture2D boxImage;
@@ -210,29 +213,29 @@ void play(Music music);
 /* Menu Text Parameters */
 
 Menu mainMenu({
-                       {"Play",         [] { Animation::transition(Animation::fade_out);}},
-                       {"Choose Level", [] { gameState = SELECT_LEVEL_STATE;}},
-                       {"Settings",     [] { gameState = OPTION_STATE;}},
-                       {"Exit",         [] {CloseWindow();}}
-               }, [] {CloseWindow();}, WHITE, GRAY, 50.0f, {0.2f, 0.4f}, {0.0f, 0.075f});
+       {"Play",         [] { Animation::transition(Animation::fade_out);}},
+       {"Choose Level", [] { gameState = SELECT_LEVEL_STATE;}},
+       {"Settings",     [] { gameState = OPTION_STATE;}},
+       {"Exit",         [] {CloseWindow();}}
+}, [] {CloseWindow();}, WHITE, GRAY, 50.0f, {0.2f, 0.4f}, {0.0f, 0.075f});
 Text mainMenuTitle("Catastrophic", RED, 80.0f, {0.2f, 0.2f}, 4.0f);
 Text mainMenuByline("By @lunamaltseva", GRAY, 30.0f, {0.2f, 0.85f}, 2.0f);
 
 Menu selectLevelMenu({
-                               {"Level 1", [] { Animation::transition(Animation::fade_out);}},
-                               {"Level 2", [] { Animation::transition(Animation::fade_out);}},
-                               {"Level 3", [] { Animation::transition(Animation::fade_out);}}
-                       }, [] { gameState = MENU_STATE;}, WHITE, GRAY, 50.0f, {0.35f, 0.475f}, {0.1f, 0.0f});
+   {"Level 1", [] { Animation::transition(Animation::fade_out);}},
+   {"Level 2", [] { Animation::transition(Animation::fade_out);}},
+   {"Level 3", [] { Animation::transition(Animation::fade_out);}}
+}, [] { gameState = MENU_STATE;}, WHITE, GRAY, 50.0f, {0.35f, 0.475f}, {0.1f, 0.0f});
 
 Text optionsMenuTitle("Settings", WHITE, 75.0f, {0.43f, 0.205f}, 4.0f);
 OptionsMenu optionsMenu({
-                                 {"Move Up", []          {/*optionsMenu.getKey()*/;}},
-                                 {"Move Left", []        {/*optionsMenu.getKey()*/;}},
-                                 {"Move Down", []        {/*optionsMenu.getKey()*/;}},
-                                 {"Move Right", []       {/*optionsMenu.getKey()*/;}},
-                                 {"Undo Move", []        {/*optionsMenu.getKey()*/;}},
-                                 {"Tiles per Second", [] {/*optionsMenu.increaseDecrease()*/;}}
-                         }, [] { gameState = MENU_STATE;}, WHITE, GRAY, 40.0f, {0.4f, 0.4f}, {0.0f, 0.05f});
+     {"Move Up", []          {/*optionsMenu.getKey()*/;}},
+     {"Move Left", []        {/*optionsMenu.getKey()*/;}},
+     {"Move Down", []        {/*optionsMenu.getKey()*/;}},
+     {"Move Right", []       {/*optionsMenu.getKey()*/;}},
+     {"Undo Move", []        {/*optionsMenu.getKey()*/;}},
+     {"Tiles per Second", [] {/*optionsMenu.increaseDecrease()*/;}}
+}, [] { gameState = MENU_STATE;}, WHITE, GRAY, 40.0f, {0.4f, 0.4f}, {0.0f, 0.05f});
 
 MultilineText pauseMenuTitle("Bear It Out\neven to the\nEdge of Doom", {0.0f, 0.075f}, RED, 70.0f, {0.5f, 0.2f});
 Menu pauseMenu({
@@ -242,8 +245,8 @@ Menu pauseMenu({
 }, [] { gameState = GAME_STATE;}, WHITE, GRAY, 50.0f, {0.5f, 0.6f}, {0.0f, 0.075f});
 
 Menu levelCompletedMenu({
-                             {"Continue",  [] { Animation::transition(Animation::fade_out);}},
-                             {"Restart",   [] { Animation::transition(Animation::fade_out);}},
-                     }, [] { ; }, WHITE, GRAY, 50.0f, {0.5f, 0.6f});
+     {"Continue",  [] { Animation::transition(Animation::fade_out);}},
+     {"Restart",   [] { Animation::transition(Animation::fade_out);}},
+}, [] { ; }, WHITE, GRAY, 50.0f, {0.5f, 0.65f});
 
 #endif // GLOBALS_H

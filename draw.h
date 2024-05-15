@@ -72,7 +72,7 @@ void draw_Menu() {
     mainMenuByline.draw();
     int minimum = std::min(screenWidth, screenHeight);
     float scale = minimum*0.25f;
-    drawImage(goalImage, screenWidth - (scale * 1.75f), screenHeight - (scale * 1.5f), scale);
+    drawImage((isGameCompleted ? owner : goalImage), screenWidth - (scale * 1.75f), screenHeight - (scale * 1.5f), scale);
     drawImage(playerRegular,
               screenWidth - (scale * 3.0f) + 0.75f * ((cosf(rand() % 10 * game_frame) + sinf(rand() % 4 * game_frame))),
               screenHeight - (scale * 1.5f), scale);
@@ -80,21 +80,19 @@ void draw_Menu() {
 
 void Menu::draw() {
     for (int i = 0; i < entry.size(); i++) {
-        Text text(entry[i].text, (i == selection ? colorActive : colorInactive), size, {offsetPercentInitial.x + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
-        text.draw();
+        Text(entry[i].text, (i == selection ? colorActive : colorInactive), size, {offsetPercentInitial.x + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font).draw();
     }
 }
 
 void OptionsMenu::draw() {
     Menu::draw();
     for (int i = 0; i < entry.size(); i++) {
-        Text text(parameters[i].valueType == Parameters::speed ? std::to_string(parameters[i].value) : std::string(1, static_cast<char>(parameters[i].value)), (i == selection && selected ? colorActive : colorInactive), size, {offset + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font);
-        text.draw();
+        Text(parameters[i].valueType == Parameters::speed ? std::to_string(parameters[i].value) : std::string(1, static_cast<char>(parameters[i].value)), (i == selection && selected ? colorActive : colorInactive), size, {offset + offsetPercentAdditional.x*i, offsetPercentInitial.y + offsetPercentAdditional.y*i}, spacing, font).draw();;
     }
 }
 
 void level_stats() {
-    MultilineText((std::string("STATISTICS\nSTEPS: ") + std::to_string(LevelManager::stats[LevelManager::get_index()].steps) + " \nTIME: " + std::to_string(LevelManager::stats[LevelManager::get_index()].steps)), {0.0f, 0.075f}, WHITE, 50.0f, {0.5f, 0.3f}).draw();
+    MultilineText((std::string("Level Completed!\n. .. _ __ ___ __ _ .. .\nsteps: ") + std::to_string(LevelManager::stats[LevelManager::get_index()].steps) + " \ntime: " + std::to_string(LevelManager::stats[LevelManager::get_index()].time)), {0.0f, 0.075f}, WHITE, 50.0f, {0.5f, 0.23f}).draw();
 }
 
 void deriveGraphicsMetricsFromLoadedLevel() {

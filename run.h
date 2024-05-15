@@ -82,6 +82,7 @@ LevelManager::LevelManager()  {
         Level loaded_level = LevelDecoder::instantiate(line);
         add(loaded_level);
     }
+    stats[0].steps = stats[1].steps = stats[2].steps = 0;
 }
 
 void Menu::run() {

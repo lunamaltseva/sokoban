@@ -73,7 +73,9 @@ void update_game() {
             playLevelMusic();
             break;
         case ENDING_STATE:
-            play(theme);
+            if (endingGood.position() == 1 || endingBad.position() == 1 && animationFrame == 0) {
+                play(ending);
+            }
             if ((LevelManager::stats[0].steps + LevelManager::stats[1].steps + LevelManager::stats[2].steps < 1200 ? !endingGood.draw() : !endingBad.draw())) {
                 gameState = MENU_STATE;
                 Animation::transition(Animation::fade_in);
@@ -93,6 +95,8 @@ void draw_game() {
             draw_Menu();
             break;
         case GAME_STATE:
+            SeekMusicStream(theme, 0.0f);
+            SeekMusicStream(mainTheme, 0.0f);
             LevelManager::draw();
             draw_GUI();
             player.draw();
@@ -117,7 +121,7 @@ void draw_game() {
             levelCompletedMenu.run();
             break;
         case ENDING_STATE:
-
+            isGameCompleted = true;
             break;
     }
 }
