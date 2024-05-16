@@ -8,6 +8,7 @@
 #include <cstddef>
 
 bool isGameCompleted = false;
+bool tutorialWASD = false, tutorialSkulls = false, tutorialBlood = false;
 
 /* Loaded Level Data */
 
@@ -65,6 +66,8 @@ Animation::animate Animation::animation;
 int Animation::animationDuration;
 
 Animation animation(60);
+
+Prompt *displayPrompt;
 
 /* Game State */
 
@@ -181,6 +184,7 @@ victory_ball victory_balls[VICTORY_BALL_COUNT];
 // GRAPHICS_H
 
 void deriveGraphicsMetricsFromLoadedLevel();
+void tutorials();
 
 // IMAGES_H
 

@@ -7,7 +7,6 @@
 #include "assets.h"
 #include "levels.h"
 #include "player.h"
-#include "utilities.h"
 #include "lunalib.h"
 
 #include <string>

@@ -70,9 +70,37 @@ void loadImages() {
 }
 
 void unloadImages() {
+    UnloadTexture(playerRegular);
+    UnloadTexture(playerInvert);
+    UnloadTexture(owner);
     UnloadTexture(goalImage);
     UnloadTexture(boxImage);
     UnloadTexture(boxOnGoalImage);
+    UnloadTexture(floor1);
+    UnloadTexture(floor2);
+    UnloadTexture(floor3);
+    UnloadTexture(house1);
+    UnloadTexture(house2);
+    UnloadTexture(house3);
+    UnloadTexture(city1);
+    UnloadTexture(city2);
+    UnloadTexture(city3);
+    UnloadTexture(wilderness1);
+    UnloadTexture(wilderness2);
+    UnloadTexture(wilderness3);
+    UnloadTexture(candleOff);
+    UnloadTexture(candleOn);
+    UnloadTexture(blood);
+    UnloadTexture(intro1);
+    UnloadTexture(intro2);
+    UnloadTexture(intro3);
+    UnloadTexture(intro4);
+    UnloadTexture(endingGood1);
+    UnloadTexture(endingGood2);
+    UnloadTexture(endingGood3);
+    UnloadTexture(endingBad1);
+    UnloadTexture(endingBad2);
+    UnloadTexture(endingBad3);
 }
 
 void load_sounds() {
@@ -101,6 +129,23 @@ void load_sounds() {
 }
 
 void unload_sounds() {
+    UnloadSound(scroll);
+    UnloadSound(forward);
+    UnloadSound(backout);
+    UnloadSound(reset);
+    UnloadSound(undo);
+    UnloadSound(burial1);
+    UnloadSound(burial2);
+    UnloadSound(burial3);
+    UnloadSound(match);
+    UnloadSound(hurt);
+    UnloadSound(levelComplete);
+    UnloadSound(ending);
+    UnloadMusicStream(theme);
+    UnloadMusicStream(mainTheme);
+    UnloadMusicStream(house);
+    UnloadMusicStream(town);
+    UnloadMusicStream(forest);
     CloseAudioDevice();
 }
 

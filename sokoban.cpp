@@ -23,7 +23,12 @@ void update_game() {
         case GAME_STATE:
             playLevelMusic();
 
-            if (Animation::state() == Animation::none) {
+            if (displayPrompt) {
+                if (mv_forward() || mv_back()) {
+                    displayPrompt = nullptr;
+                }
+            }
+            else if (Animation::state() == Animation::none) {
                 int key_pressed;
                 key_pressed = GetKeyPressed();
 
@@ -124,6 +129,9 @@ void draw_game() {
             isGameCompleted = true;
             break;
     }
+
+    if (displayPrompt)
+        displayPrompt->draw();
 }
 
 int main() {

@@ -18,7 +18,8 @@ Level LevelDecoder::instantiate(std::string &line) {
     fillOut(lines, line);
 
     size_t columns = lines[0].length();
-    for (auto &el : lines) if (el.length() != columns) throw (std::runtime_error("IDIOT!"));
+    for (auto &el : lines) if (el.length() != columns)
+            displayPrompt = new Prompt("Error Loading Level!", std::string("One of the levels has corrupted data."));
 
     size_t rows = lines.size();
 
@@ -125,6 +126,23 @@ void OptionsMenu::run() {
         }
 
         this->draw();
+}
+
+void tutorials() {
+    if (!levelManager.get_index()) {
+        switch (levelManager.stats[0].steps) {
+            case 8:
+                if (!tutorialSkulls)
+                    displayPrompt = new Prompt("Tutorial [2/3]", std::string("To complete the level,\npush all skulls into graves.\n\nYou can only push 1 skull at once.\n\nPress ") + optionsMenu.getChar(5) + " to undo accidental movements." );
+                tutorialSkulls=true;
+                break;
+            case 100:
+                if (!tutorialBlood)
+                    displayPrompt = new Prompt("Tutorial [3/3]", std::string("Physical exertion causes blood loss.\nEvery 100 steps, you lose blood.\n\nTry not to lose too much blood."));
+                tutorialBlood=true;
+                break;
+        }
+    }
 }
 
 #endif //RUN_H

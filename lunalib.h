@@ -75,9 +75,6 @@ public:
     Prompt(std::string title, std::string contents)
         : title(Text(title, WHITE, 70.0f)), contents(MultilineText(contents)) { }
     void draw();
-    void run() {
-        draw();
-    }
 private:
     Text title;
     MultilineText contents;
@@ -205,6 +202,8 @@ public:
     static size_t get_size() { return levels.size(); }
     static void draw();
     static std::vector<levelStatistics> stats;
+
+    friend void tutorials();
 private:
     static Level* instance;
     static size_t index;
@@ -281,6 +280,10 @@ public:
     int getKey();
     void increaseDecrease();
     void run();
+
+    char getChar(int index) {
+        return static_cast<char>(parameters[index].value);
+    }
 
     int getValue(int index) {
         return parameters[index].value;
