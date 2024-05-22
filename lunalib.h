@@ -289,9 +289,9 @@ public:
         return parameters[index].value;
     }
 protected:
-    std::vector<Parameters> parameters = {{KEY_W, Parameters::key},{KEY_A, Parameters::key},{KEY_S, Parameters::key}, {KEY_D, Parameters::key}, {KEY_U, Parameters::key}, {3, Parameters::speed}};
+    std::vector<Parameters> parameters = {{KEY_W, Parameters::key},{KEY_A, Parameters::key},{KEY_S, Parameters::key}, {KEY_D, Parameters::key}, {KEY_U, Parameters::key}, {4, Parameters::speed}};
     bool selected;
-    float offset = 0.5f;
+    float offset = 0.53f;
 };
 
 #endif //LUNALIB_H

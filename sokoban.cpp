@@ -120,10 +120,12 @@ void draw_game() {
         case PAUSED_STATE:
             if (game_frame != 1) pauseMenu.run();
             pauseMenuTitle.draw();
+            drawImage(bg, 0, 0, screenWidth, screenHeight);
             break;
         case STATISTIC_STATE:
             level_stats();
             levelCompletedMenu.run();
+            drawImage(bg, 0, 0, screenWidth, screenHeight);
             break;
         case ENDING_STATE:
             isGameCompleted = true;

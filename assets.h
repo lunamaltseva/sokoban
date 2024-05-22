@@ -9,7 +9,7 @@
 #include <cassert>
 
 void loadFonts() {
-    menu_font = LoadFontEx(nullptr, 128, nullptr, 0);
+    menu_font = LoadFontEx("data/fonts/alagard.ttf", 256, 0, 128);
 }
 
 void unloadFonts() {
@@ -42,6 +42,8 @@ void loadImages() {
     candleOn            = LoadTexture("data/images/candle_on.png");
     blood               = LoadTexture("data/images/blood.png");
 
+    bg                  = LoadTexture("data/images/bg.png");
+
     intro1              = LoadTexture("data/images/slides/intro1.png");
     intro2              = LoadTexture("data/images/slides/intro2.png");
     intro3              = LoadTexture("data/images/slides/intro3.png");
@@ -59,11 +61,11 @@ void loadImages() {
     intro.add( {"They all died.",                                 intro4});
 
     endingGood.add({"Oh, how I miss you...",                           endingGood1});
-    endingGood.add({"My God! It cannot be!",                           endingGood2});
+    endingGood.add({"God, how it hurts!",                              endingGood2});
     endingGood.add({"\"Here's looking at you, kitten.\"",              endingGood3});
 
-    endingBad.add( {"Sweet death embrace, depart me from this world!",  endingBad1});
-    endingBad.add( {"...",                                              endingBad2});
+    endingBad.add( {"I can't live like this! I can't!..",               endingBad1});
+    endingBad.add( {"I can't...",                                       endingBad2});
     endingBad.add( {"\"Sigh. What am I going to do with you, kitten.\"",endingBad3});
 
     player.setImage(playerRegular);
@@ -105,6 +107,7 @@ void unloadImages() {
 
 void load_sounds() {
     InitAudioDevice();
+    alert          = LoadSound("data/sounds/alert.ogg");
     scroll         = LoadSound("data/sounds/scroll.ogg");
     forward        = LoadSound("data/sounds/click.ogg");
     backout        = LoadSound("data/sounds/backout.ogg");

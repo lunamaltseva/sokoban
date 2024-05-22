@@ -132,13 +132,21 @@ void tutorials() {
     if (!levelManager.get_index()) {
         switch (levelManager.stats[0].steps) {
             case 8:
-                if (!tutorialSkulls)
-                    displayPrompt = new Prompt("Tutorial [2/3]", std::string("To complete the level,\npush all skulls into graves.\n\nYou can only push 1 skull at once.\n\nPress ") + optionsMenu.getChar(5) + " to undo accidental movements." );
+                if (!tutorialSkulls) {
+                    displayPrompt = new Prompt("Tutorial [2/3]", std::string(
+                            "To complete the level,\npush all skulls into graves.\n\nYou can only push 1 skull at once.\n\nPress ") +
+                                                                 optionsMenu.getChar(5) +
+                                                                 " to undo accidental movements.");
+                    play(alert);
+                }
                 tutorialSkulls=true;
                 break;
             case 100:
-                if (!tutorialBlood)
-                    displayPrompt = new Prompt("Tutorial [3/3]", std::string("Physical exertion causes blood loss.\nEvery 100 steps, you lose blood.\n\nTry not to lose too much blood."));
+                if (!tutorialBlood) {
+                    displayPrompt = new Prompt("Tutorial [3/3]", std::string(
+                            "Physical exertion causes blood loss.\nEvery 100 steps, you lose blood.\n\nTry not to lose too much blood."));
+                    play(alert);
+                }
                 tutorialBlood=true;
                 break;
         }

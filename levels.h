@@ -10,7 +10,7 @@ void LevelManager::load(size_t offset) {
     index+=offset;
 
     if (!index && !tutorialWASD) {displayPrompt = new Prompt("Tutorial [1/3]", std::string("Use ") + optionsMenu.getChar(0) + optionsMenu.getChar(1) + optionsMenu.getChar(2) + optionsMenu.getChar(3) + " to move around\n\nPress ESC to pause" );
-    tutorialWASD = true;}
+    tutorialWASD = true; play(alert); }
     if (stats[0].steps == 0 && index > 0) stats[0].steps = 238;
     if (stats[1].steps == 0 && index > 1) stats[1].steps = 493;
 

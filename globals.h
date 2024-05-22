@@ -112,6 +112,8 @@ Texture2D candleOff;
 Texture2D candleOn;
 Texture2D blood;
 
+Texture2D bg;
+
 Texture2D intro1;
 Texture2D intro2;
 Texture2D intro3;
@@ -123,10 +125,9 @@ Texture2D endingBad1;
 Texture2D endingBad2;
 Texture2D endingBad3;
 
-Slideshow intro(300);
+Slideshow intro(270);
 Slideshow endingGood(300);
 Slideshow endingBad(300);
-
 struct sprite {
     size_t frameCount    = 0;
     size_t framesToSkip = 3;
@@ -139,6 +140,7 @@ struct sprite {
 
 /* Sounds */
 
+Sound alert;
 Sound scroll;
 Sound forward;
 Sound backout;
@@ -160,24 +162,6 @@ Music mainTheme;
 Music house;
 Music town;
 Music forest;
-
-
-/* Victory Menu Background */
-
-struct victory_ball {
-    float x, y;
-    float dx, dy;
-    float radius;
-};
-
-const size_t VICTORY_BALL_COUNT     = 2000;
-const float VICTORY_BALL_MAX_SPEED  = 2.0f;
-const float VICTORY_BALL_MIN_RADIUS = 2.0f;
-const float VICTORY_BALL_MAX_RADIUS = 3.0f;
-const Color VICTORY_BALL_COLOR      = { 180, 180, 180, 255 };
-const unsigned char VICTORY_BALL_TRAIL_TRANSPARENCY = 10;
-victory_ball victory_balls[VICTORY_BALL_COUNT];
-
 
 /* Forward Declarations */
 
@@ -229,16 +213,16 @@ Menu selectLevelMenu({
    {"Level 1", [] { Animation::transition(Animation::fade_out);}},
    {"Level 2", [] { Animation::transition(Animation::fade_out);}},
    {"Level 3", [] { Animation::transition(Animation::fade_out);}}
-}, [] { gameState = MENU_STATE;}, WHITE, GRAY, 50.0f, {0.35f, 0.475f}, {0.1f, 0.0f});
+}, [] { gameState = MENU_STATE;}, WHITE, GRAY, 50.0f, {0.35f, 0.475f}, {0.13f, 0.0f});
 
 Text optionsMenuTitle("Settings", WHITE, 75.0f, {0.43f, 0.205f}, 4.0f);
 OptionsMenu optionsMenu({
-     {"Move Up", []          {/*optionsMenu.getKey()*/;}},
-     {"Move Left", []        {/*optionsMenu.getKey()*/;}},
-     {"Move Down", []        {/*optionsMenu.getKey()*/;}},
-     {"Move Right", []       {/*optionsMenu.getKey()*/;}},
-     {"Undo Move", []        {/*optionsMenu.getKey()*/;}},
-     {"Tiles per Second", [] {/*optionsMenu.increaseDecrease()*/;}}
+     {"Move Up", []          {optionsMenu.getKey();}},
+     {"Move Left", []        {optionsMenu.getKey();}},
+     {"Move Down", []        {optionsMenu.getKey();}},
+     {"Move Right", []       {optionsMenu.getKey();}},
+     {"Undo Move", []        {optionsMenu.getKey();}},
+     {"Tiles per Second", [] {optionsMenu.increaseDecrease();}}
 }, [] { gameState = MENU_STATE;}, WHITE, GRAY, 40.0f, {0.4f, 0.4f}, {0.0f, 0.05f});
 
 MultilineText pauseMenuTitle("Bear It Out\neven to the\nEdge of Doom", {0.0f, 0.075f}, RED, 70.0f, {0.5f, 0.2f});

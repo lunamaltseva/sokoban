@@ -216,10 +216,12 @@ void Animation::run() {
         case PAUSED_STATE:
             pauseMenu.draw();
             pauseMenuTitle.draw();
+            drawImage(bg, 0, 0, screenWidth, screenHeight);
             break;
         case STATISTIC_STATE:
             level_stats();
             levelCompletedMenu.draw();
+            drawImage(bg, 0, 0, screenWidth, screenHeight);
             break;
     }
 
