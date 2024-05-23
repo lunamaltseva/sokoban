@@ -66,7 +66,7 @@ void update_game() {
                     gameState = PAUSED_STATE;
                     game_frame = 0;
                 }
-                if (IsKeyPressed(KEY_F)) levelManager.forceComplete();
+                if (IsKeyPressed(KEY_X) && IsKeyDown(KEY_LEFT_CONTROL)) levelManager.forceComplete();
             }
             break;
         case PAUSED_STATE:

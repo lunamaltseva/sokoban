@@ -75,7 +75,9 @@ void Player::move(size_t dx, size_t dy) {
     runtime = 0;
 
     LevelManager::stats[LevelManager::get_index()].steps++;
-    if ((LevelManager::stats[0].steps + LevelManager::stats[1].steps + LevelManager::stats[2].steps)%100==0) PlaySound(hurt);
+    if ((LevelManager::stats[0].steps + LevelManager::stats[1].steps + LevelManager::stats[2].steps)%100==0) {
+        PlaySound(hurt);
+    }
     tutorials();
 }
 

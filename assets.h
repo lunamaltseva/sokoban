@@ -153,10 +153,12 @@ void unload_sounds() {
 }
 
 void play(Sound sound) {
+    //SetSoundVolume(sound, 10.0f);
     PlaySound(sound);
 }
 
 void play(Music music) {
+    //SetMusicVolume(music, 10.0f);
     PlayMusicStream(music);
     UpdateMusicStream(music);
 }

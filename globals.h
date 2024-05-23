@@ -9,6 +9,7 @@
 
 bool isGameCompleted = false;
 bool tutorialWASD = false, tutorialSkulls = false, tutorialBlood = false;
+Color clearBackground;
 
 /* Loaded Level Data */
 
@@ -126,8 +127,8 @@ Texture2D endingBad2;
 Texture2D endingBad3;
 
 Slideshow intro(270);
-Slideshow endingGood(300);
-Slideshow endingBad(300);
+Slideshow endingGood(270);
+Slideshow endingBad(270);
 struct sprite {
     size_t frameCount    = 0;
     size_t framesToSkip = 3;
