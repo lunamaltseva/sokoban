@@ -7,7 +7,43 @@
 #include "lunalib.h"
 #include "run.h"
 
-void update_game() {
+class Game {
+public:
+    Game() {
+        loadFonts();
+        loadImages();
+        loadSounds();
+        deriveGraphicsMetricsFromLoadedLevel();
+    }
+    ~Game() {
+        levelManager.unload();
+        unloadSounds();
+        unloadImages();
+        unloadFonts();
+    }
+    static void update();
+    static void render();
+};
+
+int main() {
+    SetConfigFlags(FLAG_VSYNC_HINT);
+    InitWindow(1920, 1080, "Catastrophic");
+    ToggleFullscreen();
+    SetTargetFPS(60);
+    HideCursor();
+    SetExitKey(0);
+
+    Game catastrophic;
+    while (!WindowShouldClose()) {
+        Game::update();
+        Game::render();
+    }
+    CloseWindow();
+
+    return 0;
+}
+
+void Game::update() {
     switch (gameState) {
         case INTRO_STATE:
             play(theme);
@@ -78,7 +114,7 @@ void update_game() {
             playLevelMusic();
             break;
         case ENDING_STATE:
-            if (endingGood.position() == 1 || endingBad.position() == 1 && animationFrame == 0) {
+            if (endingGood.at() == 1 || endingBad.at() == 1 && animationFrame == 0) {
                 play(ending);
             }
             if ((LevelManager::stats[0].steps + LevelManager::stats[1].steps + LevelManager::stats[2].steps < 1200 ? !endingGood.draw() : !endingBad.draw())) {
@@ -89,82 +125,52 @@ void update_game() {
     }
 }
 
-void draw_game() {
+void Game::render() {
+    BeginDrawing();
+    ClearBackground(BLACK);
     game_frame++;
     if (Animation::state() != Animation::none) {
         Animation::run();
     }
     else switch (gameState) {
-        case MENU_STATE:
-            mainMenu.run();
-            draw_Menu();
-            break;
-        case GAME_STATE:
-            SeekMusicStream(theme, 0.0f);
-            SeekMusicStream(mainTheme, 0.0f);
-            LevelManager::draw();
-            draw_GUI();
-            player.draw();
-            break;
-        case SELECT_LEVEL_STATE:
-            selectLevelMenu.run();
-            mainMenu.draw();
-            draw_Menu();
-            break;
-        case OPTION_STATE:
-            mainMenu.draw();
-            draw_Menu();
-            optionsMenu.run();
-            optionsMenuTitle.draw();
-            break;
-        case PAUSED_STATE:
-            if (game_frame != 1) pauseMenu.run();
-            pauseMenuTitle.draw();
-            drawImage(bg, 0, 0, screenWidth, screenHeight);
-            break;
-        case STATISTIC_STATE:
-            level_stats();
-            levelCompletedMenu.run();
-            drawImage(bg, 0, 0, screenWidth, screenHeight);
-            break;
-        case ENDING_STATE:
-            isGameCompleted = true;
-            break;
-    }
+            case MENU_STATE:
+                mainMenu.run();
+                draw_Menu();
+                break;
+            case GAME_STATE:
+                SeekMusicStream(theme, 0.0f);
+                SeekMusicStream(mainTheme, 0.0f);
+                LevelManager::draw();
+                draw_GUI();
+                player.draw();
+                break;
+            case SELECT_LEVEL_STATE:
+                selectLevelMenu.run();
+                mainMenu.draw();
+                draw_Menu();
+                break;
+            case OPTION_STATE:
+                mainMenu.draw();
+                draw_Menu();
+                optionsMenu.run();
+                optionsMenuTitle.draw();
+                break;
+            case PAUSED_STATE:
+                if (game_frame != 1) pauseMenu.run();
+                pauseMenuTitle.draw();
+                drawImage(bg, 0, 0, screenWidth, screenHeight);
+                break;
+            case STATISTIC_STATE:
+                level_stats();
+                levelCompletedMenu.run();
+                drawImage(bg, 0, 0, screenWidth, screenHeight);
+                break;
+            case ENDING_STATE:
+                isGameCompleted = true;
+                break;
+        }
 
     if (displayPrompt)
         displayPrompt->draw();
-}
-
-int main() {
-    SetConfigFlags(FLAG_VSYNC_HINT);
-    InitWindow(GetScreenWidth(), GetScreenHeight(), "Sokoban");
-    SetTargetFPS(60);
-    HideCursor();
-    ToggleFullscreen();
-    SetExitKey(0);
-
-    loadFonts();
-    loadImages();
-    load_sounds();
-
-    deriveGraphicsMetricsFromLoadedLevel();
-
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        update_game();
-        draw_game();
-
-        EndDrawing();
-    }
-    CloseWindow();
-
-    levelManager.unload();
-    unload_sounds();
-    unloadImages();
-    unloadFonts();
-
-    return 0;
+    EndDrawing();
 }

@@ -216,6 +216,7 @@ Menu selectLevelMenu({
    {"Level 3", [] { Animation::transition(Animation::fade_out);}}
 }, [] { gameState = MENU_STATE;}, WHITE, GRAY, 50.0f, {0.37f, 0.475f}, {0.12f, 0.0f});
 
+extern OptionsMenu optionsMenu;
 Text optionsMenuTitle("Settings", WHITE, 75.0f, {0.43f, 0.205f}, 4.0f);
 OptionsMenu optionsMenu({
      {"Move Up", []          {optionsMenu.getKey();}},

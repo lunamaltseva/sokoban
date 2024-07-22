@@ -14,7 +14,7 @@
 #include <cstdlib>
 
 void Text::draw() {
-    dimensions = MeasureTextEx(*font, text.c_str(), size, spacing);
+    dimensions = MeasureTextEx(*font, text.c_str(), size*((float)GetScreenHeight()/1080), spacing);
 
     Vector2 pos = {
             (screenWidth * offsetPercent.x) - (0.5f * dimensions.x) + 0.75f * ((cosf(rand() % 10 * game_frame) + sinf(rand() % 4 * game_frame))),
@@ -37,9 +37,9 @@ void Prompt::draw() {
             size.x = MeasureTextEx(*contents.font, el.c_str(), contents.size, contents.spacing).x;
     }
     Vector2 sizePercent = {((screenWidth - size.x) * 0.5f) / screenWidth, ((screenHeight - size.y) * 0.5f) / screenHeight};
-    title.position({0.5f, sizePercent.y});
-    contents.position({0.5f, sizePercent.y+((title.size+30.0f) / screenHeight)});
-    OK.position({0.5f, ((size.y + screenHeight) * 0.52f) / screenHeight});
+    title.reposition({0.5f, sizePercent.y});
+    contents.reposition({0.5f, sizePercent.y + ((title.size + 30.0f) / screenHeight)});
+    OK.reposition({0.5f, ((size.y + screenHeight) * 0.52f) / screenHeight});
 
     DrawRectangle((screenWidth - size.x) * 0.5f - 80.0f, (screenHeight - size.y) * 0.5f - 80.0f, size.x + 160.0f, size.y + 160.0f, BLACK);
     DrawRectangleLinesEx({(screenWidth - size.x) * 0.5f - 80.0f, (screenHeight - size.y) * 0.5f - 80.0f, size.x + 160.0f, size.y + 160.0f}, 5.0f, WHITE);

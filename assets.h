@@ -105,7 +105,7 @@ void unloadImages() {
     UnloadTexture(endingBad3);
 }
 
-void load_sounds() {
+void loadSounds() {
     InitAudioDevice();
     alert          = LoadSound("data/sounds/alert.ogg");
     scroll         = LoadSound("data/sounds/scroll.ogg");
@@ -131,7 +131,7 @@ void load_sounds() {
     forest         = LoadMusicStream("data/music/forest.ogg");
 }
 
-void unload_sounds() {
+void unloadSounds() {
     UnloadSound(scroll);
     UnloadSound(forward);
     UnloadSound(backout);
@@ -153,12 +153,10 @@ void unload_sounds() {
 }
 
 void play(Sound sound) {
-    //SetSoundVolume(sound, 10.0f);
     PlaySound(sound);
 }
 
 void play(Music music) {
-    //SetMusicVolume(music, 10.0f);
     PlayMusicStream(music);
     UpdateMusicStream(music);
 }

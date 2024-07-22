@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include <string>
 #include <cstddef>
+#include <utility>
 #include <vector>
 #include <functional>
 #include <sstream>
@@ -35,21 +36,23 @@ bool is_key(int check) {
 }
 
 Font menu_font;
+
 class Text {
 public:
     Text(const std::string text, Color color = WHITE, float size = 50.0f, Vector2 offset = {0.5f,0.5f}, float spacing = 4.0f, Font *font = &menu_font)
             : text(text), color(color), size(size), font(font), spacing(spacing), offsetPercent(offset) {}
     virtual void draw();
-    void position(Vector2 position) {
+    void reposition(Vector2 position) {
         offsetPercent = position;
     }
-    friend class Prompt;
 protected:
     std::string text;
     float size, spacing;
     Vector2 offsetPercent, dimensions;
     Color color;
     Font* font;
+
+    friend class Prompt;
 };
 
 class MultilineText : public Text {
@@ -64,10 +67,11 @@ public:
         }
     }
     void draw() override;
-    friend class Prompt;
 protected:
     Vector2 dOffset;
     std::vector<std::string> lines;
+
+    friend class Prompt;
 };
 
 class Prompt {
@@ -78,7 +82,7 @@ public:
 private:
     Text title;
     MultilineText contents;
-    Text OK = Text("continue", GRAY, 40.0f);
+    Text OK = Text("OK", WHITE, 40.0f);
 };
 
 void drawImage(Texture2D image, float x, float y, float width, float height);
@@ -90,8 +94,7 @@ public:
     void draw() {
         caption.draw();
         float minimum = std::min(GetScreenHeight(), GetScreenWidth())*0.4f;
-        drawImage(picture, (GetScreenWidth() - (2 * minimum)) * 0.5f, (GetScreenHeight() - minimum) * 0.5f, 2 * minimum,
-                  minimum);
+        drawImage(picture, (GetScreenWidth() - (2 * minimum)) * 0.5f, (GetScreenHeight() - minimum) * 0.5f, 2 * minimum, minimum);
     }
 private:
     Text caption;
@@ -103,9 +106,9 @@ extern int animationFrame;
 class Slideshow {
 public:
     explicit Slideshow(int time) : timePerSlide(time) {}
-    explicit Slideshow(std::vector<Slide> slides, int time) : slides(slides), timePerSlide(time) {}
+    explicit Slideshow(std::vector<Slide> slides, int time) : slides(std::move(slides)), timePerSlide(time) {}
     void add(const Slide &slide) { slides.push_back(slide); }
-    int position() {
+    int at() {
         return itr;
     }
 
@@ -199,7 +202,7 @@ public:
     void reset() { index = 0; unload(); stats[0].steps = stats[1].steps = stats[2].steps = 0; }
     void forceComplete();
     static size_t get_index() { return index; }
-    static size_t get_size() { return levels.size(); }
+    static size_t get_size()  { return levels.size(); }
     static void draw();
     static std::vector<levelStatistics> stats;
 
